@@ -4,17 +4,19 @@
 <head>
     <meta charset="utf-8">
     <title>{{title}}</title>
-    <link rel="stylesheet" type="text/css"
-    href="{% static 'hello/css/style.css' %}"/>
+    <link rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
 </head>
-<body>
-    <h1>{{title}}</h1>
-    <p>{{msg}}</p>
+<body class="container">
+    <h1 class="display-4 text-primary">{{title}}</h1>
+    <p class="h5 mt-4">{{msg}}</p>
     <form action="{% url 'form' %}" method="post">
         {% csrf_token %}
+        <div class="msg">
         <label for="msg">message: </label>
-        <input id="msg" type="text" name="msg">
-        <input type="submit" value="click">
+            <input id="msg" type="text" class="form-control" name="msg">
+            <input type="submit" value="click">
+        </div>
     </form>
 </body>
 </html>
