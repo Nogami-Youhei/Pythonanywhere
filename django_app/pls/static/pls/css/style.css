@@ -2,3 +2,7 @@ body{
     color: white;
     background-color: black;
 }
+
+td, th {
+    padding: 5px 10px;
+}

@@ -9,7 +9,46 @@
         href="{% static 'pls/css/style.css' %}">
 </head>
 <body>
-    <h1>PLS</h1>
-    <p>test</p>
+    <h1>主成分回帰</h1>
+    <form action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    <label for="n">説明変数の数: </label>
+    <select name="n" id="n">
+    {% for i in range %}
+        <option value="{{i}}">{{i}}</option>
+    {% endfor %}
+    <input type="submit" value="click">
+    </select>
+    </form>
+    {% if n %}
+    <p>※値を入力してください。</p>
+    <form action="{% url 'index' %}" method="post">
+        <table >
+        {% csrf_token %}
+        <tr><th>
+        <label for="目的変数">目的変数: </label>
+        </th>
+        <td>
+        <input id="目的変数" type="text" name="目的変数">
+        </td></tr>
+        {% for i in n %}
+        <tr><th>
+        <label for="説明変数{{i}}">説明変数{{i}}: </label>
+        </th>
+        <td>
+        <input id="説明変数{{i}}" type="text" name="説明変数{{i}}">
+        </td></tr>
+        {% endfor %}
+        <input type="hidden" type="text" name="n" value="{{n}}">
+        <tr><th>
+        <input type="submit" value="click">
+        </th></tr>
+        </table>
+    </form>
+    {% endif %}
+    <p>{{ components|safe }}</p>
+    <p>{{ variance_ratio|safe }}</p>
+    <p>{{ predict|safe }}</p>
+    <p>{{ R2|safe }}</p>
 </body>
 </html>
