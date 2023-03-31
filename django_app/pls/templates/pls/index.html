@@ -10,18 +10,7 @@
 </head>
 <body>
     <h1>主成分回帰</h1>
-    <form action="{% url 'index' %}" method="post">
-    {% csrf_token %}
-    <label for="n">説明変数の数: </label>
-    <select name="n" id="n">
-    {% for i in range1 %}
-        <option value="{{i}}">{{i}}</option>
-    {% endfor %}
-    </select>
-    <input type="submit" value="click">
-    </form>
-    <p>{{ message }}</p>
-    {% if n %}
+    <p>{{ message|safe }}</p>
     <form action="{% url 'index' %}" method="post">
         <table>
         {% csrf_token %}
@@ -29,16 +18,14 @@
         <label for="目的変数">目的変数: </label>
         </th>
         <td>
-        <input id="目的変数" type="text" name="目的変数">
+        <input id="目的変数" type="text" name="目的変数" size="41">
         </td></tr>
-        {% for i in range2 %}
         <tr><th>
-        <label for="説明変数{{i}}">説明変数{{i}}: </label>
+        <label for="説明変数">説明変数: </label>
         </th>
         <td>
-        <input id="説明変数{{i}}" type="text" name="説明変数{{i}}">
+        <textarea id="説明変数" name="説明変数" rows="4" cols="40"></textarea>
         </td></tr>
-        {% endfor %}
         <tr><th>
         <label for="n_components">主成分の数: </label>
         </th><td>
@@ -48,14 +35,11 @@
         {% endfor %}
         </select>
         </td></tr>
-        <input type="hidden" type="text" name="n" value="{{n}}">
-        <input type="hidden" type="text" name="range2" value="{{range2}}">
-        <tr><th>
+        <tr><td>
         <input type="submit" value="click">
-        </th></tr>
+        </td></tr>
         </table>
     </form>
-    {% endif %}
     <p> {{ components1|safe }}
     {% for item in components2 %}
     {{ item }}<br>
