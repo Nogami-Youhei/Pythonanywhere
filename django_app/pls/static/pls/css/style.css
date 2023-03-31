@@ -1,8 +1,14 @@
 body{
     color: white;
     background-color: black;
+    margin: 60px;   /* 外側の余白を40pxにする */
+    padding: 0;      /* 内側の余白を消す(念のため) */
 }
 
 td, th {
     padding: 5px 10px;
+}
+
+footer{
+    color: gray;
 }

@@ -14,16 +14,16 @@
     {% csrf_token %}
     <label for="n">説明変数の数: </label>
     <select name="n" id="n">
-    {% for i in range %}
+    {% for i in range1 %}
         <option value="{{i}}">{{i}}</option>
     {% endfor %}
-    <input type="submit" value="click">
     </select>
+    <input type="submit" value="click">
     </form>
+    <p>{{ message }}</p>
     {% if n %}
-    <p>※値を入力してください。</p>
     <form action="{% url 'index' %}" method="post">
-        <table >
+        <table>
         {% csrf_token %}
         <tr><th>
         <label for="目的変数">目的変数: </label>
@@ -31,7 +31,7 @@
         <td>
         <input id="目的変数" type="text" name="目的変数">
         </td></tr>
-        {% for i in n %}
+        {% for i in range2 %}
         <tr><th>
         <label for="説明変数{{i}}">説明変数{{i}}: </label>
         </th>
@@ -39,14 +39,28 @@
         <input id="説明変数{{i}}" type="text" name="説明変数{{i}}">
         </td></tr>
         {% endfor %}
+        <tr><th>
+        <label for="n_components">主成分の数: </label>
+        </th><td>
+        <select name="n_components" id="n_components">
+        {% for i in range1 %}
+        <option value="{{i}}">{{i}}</option>
+        {% endfor %}
+        </select>
+        </td></tr>
         <input type="hidden" type="text" name="n" value="{{n}}">
+        <input type="hidden" type="text" name="range2" value="{{range2}}">
         <tr><th>
         <input type="submit" value="click">
         </th></tr>
         </table>
     </form>
     {% endif %}
-    <p>{{ components|safe }}</p>
+    <p> {{ components1|safe }}
+    {% for item in components2 %}
+    {{ item }}<br>
+    {% endfor %}
+    </p>
     <p>{{ variance_ratio|safe }}</p>
     <p>{{ predict|safe }}</p>
     <p>{{ R2|safe }}</p>
