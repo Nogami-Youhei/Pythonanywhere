@@ -30,7 +30,8 @@
     </div>
     <div class="pcr-contents wrapper">
     <p class="outline">主成分分析とは、たくさんの量的な説明変数を、より少ない指標や合成変数に要約する手法です。</p>
-    <p>{{ message|safe }}</p>
+    <p>※縦はデータ、横は説明変数となるように、エクセルからコピーして貼り付けてください</p>
+    <p class="message">{{ message|safe }}</p>
     <form action="{% url 'pcr' %}" method="post">
         <table>
         {% csrf_token %}

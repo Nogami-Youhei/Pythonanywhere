@@ -18,7 +18,6 @@ def outline(request):
 def pls(request):
     params = {
         'range1': range(1, 11),
-        'message': '※縦はデータ、横は説明変数となるように、<br>　エクセルからコピーして貼り付けてください',
     }
     if (request.method == 'POST'):
         try:
@@ -59,7 +58,6 @@ def pls(request):
 def pcr(request):
     params = {
         'range1': range(1, 11),
-        'message': '※縦はデータ、横は説明変数となるように、<br>　エクセルからコピーして貼り付けてください',
     }
     if (request.method == 'POST'):
         try:
