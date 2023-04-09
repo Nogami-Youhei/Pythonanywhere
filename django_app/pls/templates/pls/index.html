@@ -4,49 +4,31 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>PLS</title>
-    <link rel="stylesheet" type="text/css"
-        href="{% static 'pls/css/style.css' %}">
+    <title>機械学習</title>
+    <meta name="description" content="機械学習を簡単に実行">
+    <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'pls/css/style.css' %}">
+    <link rel="icon" href="/static/pls/img/favicon.png" type="image/png">
 </head>
 <body>
-    <h1>主成分回帰</h1>
-    <p>{{ message|safe }}</p>
-    <form action="{% url 'index' %}" method="post">
-        <table>
-        {% csrf_token %}
-        <tr><th>
-        <label for="目的変数">目的変数: </label>
-        </th>
-        <td>
-        <input id="目的変数" type="text" name="目的変数" size="41">
-        </td></tr>
-        <tr><th>
-        <label for="説明変数">説明変数: </label>
-        </th>
-        <td>
-        <textarea id="説明変数" name="説明変数" rows="4" cols="40"></textarea>
-        </td></tr>
-        <tr><th>
-        <label for="n_components">主成分の数: </label>
-        </th><td>
-        <select name="n_components" id="n_components">
-        {% for i in range1 %}
-        <option value="{{i}}">{{i}}</option>
-        {% endfor %}
-        </select>
-        </td></tr>
-        <tr><td>
-        <input type="submit" value="click">
-        </td></tr>
-        </table>
-    </form>
-    <p> {{ components1|safe }}
-    {% for item in components2 %}
-    {{ item }}<br>
-    {% endfor %}
-    </p>
-    <p>{{ variance_ratio|safe }}</p>
-    <p>{{ predict|safe }}</p>
-    <p>{{ R2|safe }}</p>
+    <div id="home" class="big-bg">
+        <header class="page-header wrapper">
+            <h1><a href="{% url 'index' %}"><img class="logo" src="/static/pls/img/Machine.png" alt="Machine"></a></h1>
+            <nav>
+                <ul class="main-nav">
+                    <li><a href="{% url 'outline' %}">OutLine</a></li>
+                    <li><a href="{% url 'pls' %}">PLS</a></li>
+                    <li><a href="{% url 'pcr' %}">PCR</a></li>
+                </ul>
+            </nav>
+
+        </header>
+        <div class="home-content wrapper">
+            <h2 class="page-title2"><span>P</span>ython<br><span>M</span>achine <span>L</span>earning</h2>
+            <hr>
+            <p>このサイトでは機械学習を簡単に実行できます</p>
+            <a class="button" href="{% url 'outline' %}">概要</a>
+        </div>
+    </div>
 </body>
 </html>

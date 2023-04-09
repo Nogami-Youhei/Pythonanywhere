@@ -1,0 +1,63 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>OutLine</title>
+    <meta name="description" content="機械学習を簡単に実行">
+    <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'pls/css/style.css' %}">
+    <link rel="icon" href="/static/pls/img/favicon.png" type="image/x-icon">
+</head>
+<body>
+    <div class="wrapper2">
+    <div id="outline" class="big-bg">
+        <header class="page-header wrapper">
+            <h1><a href="{% url 'index' %}"><img class="logo" src="/static/pls/img/Machine.png" alt="Machine"></a></h1>
+            <nav>
+                <ul class="main-nav">
+                    <li><a href="{% url 'outline' %}">OutLine</a></li>
+                    <li><a href="{% url 'pls' %}">PLS</a></li>
+                    <li><a href="{% url 'pcr' %}">PCR</a></li>
+                </ul>
+            </nav>
+        </header>
+        <div class="wrapper">
+            <h2 class="page-title">OutLine</h2>
+            <hr>
+        </div>
+    </div>
+    <div class="outline-contents wrapper">
+        <article>
+            <header class="post-info">
+                <h2 class="post-title">Python & django</h2>
+            </header>
+            <img src="/static/pls/img/aurora.jpg" alt="aurora">
+            <h3>環境構築</h3>
+            <p>
+                Pythonのdjangoと呼ばれるフレームワークを使ってウェブページを作成しています。
+                サーバーはPythonanywhereを利用しています。
+            </p>
+            <h3>Pythonでできること</h3>
+            <ul>
+                <li>いくつものエクセルファイルからから任意の値を抽出してデータ整理</li>
+                <li>マウスやキーボードを自動で操作する</li>
+                <li>WEBからの情報を自動で収集する</li>
+            </ul>
+        </article>
+        <aside>
+            <h3 class="sub-title">このページの作者</h3>
+            <p>
+                化学メーカーでPythonを勉強中です
+            </p>
+        </aside>
+    </div>
+    <footer>
+        <div class="wrapper">
+            <p><small>&copy; 2023 Nogami-Youhei</small></p>
+        </div>
+    </footer>
+    </div>
+</body>
+</html>

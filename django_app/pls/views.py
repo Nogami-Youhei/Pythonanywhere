@@ -9,11 +9,16 @@ from sklearn.linear_model import LinearRegression
 from sklearn.decomposition import PCA
 from sklearn.cross_decomposition import PLSRegression
 
-
 def index(request):
+    return render(request, 'pls/index.html')
+
+def outline(request):
+    return render(request, 'pls/outline.html')
+
+def pls(request):
     params = {
         'range1': range(1, 11),
-        'message': '※縦はデータ、横は説明変数となるように、<br>エクセルからコピペして貼り付けてください',
+        'message': '※縦はデータ、横は説明変数となるように、<br>　エクセルからコピーして貼り付けてください',
     }
     if (request.method == 'POST'):
         try:
@@ -29,7 +34,48 @@ def index(request):
                     'range1': range(1, 11),
                     'message': '説明変数の数より主成分の数が多いです！'
                 }
-                return render(request, 'pls/index.html', params)
+                return render(request, 'pls/pls.html', params)
+
+            PLS_model = PLSRegression(n_components=n_components)
+            PLS_model.fit(X, y)
+            predict = PLS_model.predict(X)
+            R2 = round(PLS_model.score(X, y), 4)
+            params = {
+                'range1': range(1, 11),
+                'coef_': 'coef_:<br>' + str(PLS_model.coef_),
+                'intercept_': 'intercept_:<br>' + str(PLS_model.intercept_),
+                'predict': 'predict:<br>' + str(predict),
+                'R2': 'R2: ' + str(R2),
+            }
+            return render(request, 'pls/pls.html', params)
+        except Exception as e:
+            params = {
+                'range1': range(1, 11),
+                'message': e,
+            }
+
+    return render(request, 'pls/pls.html', params)
+
+def pcr(request):
+    params = {
+        'range1': range(1, 11),
+        'message': '※縦はデータ、横は説明変数となるように、<br>　エクセルからコピーして貼り付けてください',
+    }
+    if (request.method == 'POST'):
+        try:
+            y = np.array(request.POST['目的変数'].split()).astype('float')
+            li = [i.split() for i in request.POST['説明変数'].split('\n')]
+            if li[-1] == []:
+                li.remove([])
+            X = np.array(li).astype('float')
+            n_components = int(request.POST['n_components'])
+
+            if X.shape[1] < n_components:
+                params = {
+                    'range1': range(1, 11),
+                    'message': '説明変数の数より主成分の数が多いです！'
+                }
+                return render(request, 'pls/pcr.html', params)
 
             PCR_model = make_pipeline(StandardScaler(), 
                             PCA(n_components=n_components), 
@@ -48,11 +94,11 @@ def index(request):
                 'predict': 'predict:<br>' + str(predict),
                 'R2': 'R2: ' + str(R2),
             }
-            return render(request, 'pls/index.html', params)
+            return render(request, 'pls/pcr.html', params)
         except Exception as e:
             params = {
                 'range1': range(1, 11),
                 'message': e,
             }
 
-    return render(request, 'pls/index.html', params)
+    return render(request, 'pls/pcr.html', params)
