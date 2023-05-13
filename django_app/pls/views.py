@@ -138,7 +138,9 @@ def scraping(request):
 
         #pluginfile = 'proxy_auth_plugin.zip'
         #options.add_extension(pluginfile)
+        options.add_argument('--no-sandbox')
         options.add_argument('--headless')
+        options.add_argument("--disable-gpu")
 
         with webdriver.Chrome(options=options) as driver:
             i = 0
