@@ -30,8 +30,7 @@
         </div>
     </div>
     <div class="pcr-contents wrapper">
-    <p class="outline">検索のキーワードと論文数を入力</p>
-    <p class="message">{{ message|safe }}</p>
+    <p class="outline">検索のキーワードと論文数を入力<br>論文がダウンロードされるまで数分かかります</p>
     <form action="{% url 'scraping' %}" method="post">
         <table>
         {% csrf_token %}
@@ -53,7 +52,11 @@
         </tr>
         <tr>
         <td>
-        <input type="submit" class="button" value="click">
+        <input id="btn" type="submit" class="button" value="click">
+        </td>
+        <td>
+        <p class="message">{{ message|safe }}</p>
+        <p id="message"></p>
         </td>
         </tr>
         </table>
@@ -65,5 +68,6 @@
         </div>
     </footer>
     </div>
+<script src="{% static 'pls/js/scraping.js' %}"></script>
 </body>
 </html>
