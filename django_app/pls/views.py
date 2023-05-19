@@ -145,7 +145,6 @@ def scraping(request):
 
             while True:
                 url = driver.current_url
-                #time.sleep(1)
                 html = driver.page_source.encode('utf-8')
                 soup = BeautifulSoup(html, 'html.parser')
                 elems = soup.find('ul', class_='search-resultslisting').find_all('li')
@@ -156,7 +155,6 @@ def scraping(request):
                     return render(request, 'pls/scraping.html', params)
 
                 for elem in elems:
-                    print(f'{i+1:03d}. {elem.find("a").text}')
                     line = pd.Series(index=['タイトル', 'URL', '学会誌', '出版年', '巻・ページ', '発行日', '公開日', '要約'], dtype=object)
                     line.name = f'{i+1:03d}'
                     anchor = elem.find('a').text
@@ -170,7 +168,6 @@ def scraping(request):
                     line[-3:-1] = detail[-3:-1]
                     line[4] = ', '.join(detail[3:-3])
                     driver.get(link)
-                    #time.sleep(1)
                     html = driver.page_source.encode('utf-8')
                     soup = BeautifulSoup(html, 'html.parser')
                     abstract = soup.find('p', class_='global-para-14')
@@ -204,11 +201,7 @@ def scraping(request):
                 ul = driver.find_element(By.XPATH, '//*[@id="search-pagination-wrap-top"]/div/div[1]/ul')
                 button = ul.find_elements(By.TAG_NAME, 'li')[-2]
                 if button.get_attribute('class') == 'inactive-page':
-                    params = {
-                        'message': '検索結果を全て出力しました。'
-                    }
-                    return render(request, 'pls/scraping.html', params)
-
+                    break
                 button.click()
 
             temp_dir = THIS_FOLDER.joinpath('temp')
