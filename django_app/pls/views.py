@@ -156,6 +156,11 @@ def scraping(request):
                 
                 unicodedata.normalize('NFKC', num)
                 num = int(num)
+                if num <= 0:
+                    params = {
+                        'message': '0より大きい数字を入力してください。'
+                        }
+                    return render(request, 'pls/scraping.html', params)
 
                 url = 'https://www.jstage.jst.go.jp/result/global/-char/ja?globalSearchKey=' + keyword
                 driver.get(url)
