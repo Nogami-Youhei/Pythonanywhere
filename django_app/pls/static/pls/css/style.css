@@ -188,6 +188,9 @@ input[type="submit"] {
 .start {
     color: #0bd;
 }
+label {
+    text-align: right;
+}
 
 @media (max-width: 600px) {
     .page-header {

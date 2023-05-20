@@ -36,7 +36,7 @@
         {% csrf_token %}
         <tr>
         <th>
-        <label for="keyword">キーワード: </label>
+        <label for="keyword">キーワード： </label>
         </th>
         <td>
         <input id="keyword" type="text" name="keyword" size="40">
@@ -44,10 +44,18 @@
         </tr>
         <tr>
         <th>
-        <label for="num">論文数: </label>
+        <label for="num">論文数： </label>
         </th>
         <td>
         <input id="num" type="text" name="num" size="40">
+        </td>
+        </tr>
+        <tr>
+        <th>
+        <label for="check">日本語訳： </label>
+        </th>
+        <td>
+        <input id="check" type="checkbox" name="check">
         </td>
         </tr>
         <tr>
