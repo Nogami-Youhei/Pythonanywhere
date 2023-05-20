@@ -9,7 +9,6 @@ from sklearn.decomposition import PCA
 from sklearn.cross_decomposition import PLSRegression
 import re
 import os
-import time
 import shutil
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -21,6 +20,7 @@ import openpyxl
 import openpyxl as xl
 from openpyxl.styles import Font
 from pathlib import Path
+import unicodedata
 
 THIS_FOLDER = Path(__file__).parent.resolve()
 
@@ -139,7 +139,22 @@ def scraping(request):
             i = 0
             result = []
             keyword = '+'.join(request.POST['keyword'].split())
-            num = int(request.POST['num'])
+            if re.fullmatch(r'\s*', keyword):
+                params = {
+                    'message': '文字列を入力してください。'
+                    }
+                return render(request, 'pls/scraping.html', params)
+
+            num = request.POST['num']
+            if not num.isdigit():
+                params = {
+                    'message': '数字を入力してください。'
+                    }
+                return render(request, 'pls/scraping.html', params)
+            
+            unicodedata.normalize('NFKC', num)
+            num = int(num)
+
             url = 'https://www.jstage.jst.go.jp/result/global/-char/ja?globalSearchKey=' + keyword
             driver.get(url)
 
