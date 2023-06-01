@@ -13,6 +13,7 @@ import shutil
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.select import Select
 import pandas as pd
 from mtranslate import translate
 import random
@@ -21,6 +22,7 @@ import openpyxl as xl
 from openpyxl.styles import Font
 from pathlib import Path
 import unicodedata
+from time import sleep
 
 THIS_FOLDER = Path(__file__).parent.resolve()
 
@@ -164,7 +166,12 @@ def scraping(request):
 
                 url = 'https://www.jstage.jst.go.jp/result/global/-char/ja?globalSearchKey=' + keyword
                 driver.get(url)
-
+                html = driver.page_source.encode('utf-8')
+                soup = BeautifulSoup(html, 'html.parser')
+                html = driver.page_source.encode('utf-8')
+                soup = BeautifulSoup(html, 'html.parser')
+                sortby = request.POST.get('select')
+                Select(driver.find_element(By.NAME, 'sortby')).select_by_value(str(sortby))
                 while True:
                     url = driver.current_url
                     html = driver.page_source.encode('utf-8')

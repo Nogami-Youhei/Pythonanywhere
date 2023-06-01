@@ -30,7 +30,11 @@
         </div>
     </div>
     <div class="pcr-contents wrapper">
-    <p class="outline">J-STAGEよりダウンロードする論文リストの「キーワード」と「論文数」を入力してください<br>論文リストがダウンロードされるまで数分かかることがあります</p>
+    <p class="outline">J-STAGEよりダウンロードする論文リストの「キーワード」と「論文数」を入力してください
+    <br>論文リストがダウンロードされるまで数分かかることがあります
+    <br>社内のLANもしくはGlobalProtectだとまれにサーバーエラーが発生するようです。
+    <br>GrobalProtectを切ってWi-Fiで再度試してみてください
+    </p>
     <form action="{% url 'scraping' %}" method="post">
         <table>
         {% csrf_token %}
@@ -56,6 +60,23 @@
         </th>
         <td>
         <input id="check" type="checkbox" name="check">
+        </td>
+        </tr>
+        <tr>
+        <th>
+        <label for="select">並び替え： </label>   
+        </th>
+        <td>
+        <div class="select-wrapper">
+        <select id="select" name="select" class="select">
+            <option value="1" selected="">ヒット率</option>
+            <option value="5">発行日[新しい順]</option>
+            <option value="6">発行日[古い順]</option>
+            <option value="2">公開日[新しい順]</option>
+            <option value="3">公開日[古い順]</option>
+            <option value="4">資料名順</option>
+        </select>
+        </div>
         </td>
         </tr>
         <tr>
