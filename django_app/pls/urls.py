@@ -7,4 +7,5 @@ urlpatterns = [
     path('pls', views.pls, name='pls'),
     path('pcr', views.pcr, name='pcr'),
     path('scraping', views.scraping, name='scraping'),
+    path('upload', views.upload, name='upload'),
 ]

@@ -22,6 +22,7 @@
                     <li><a href="{% url 'pls' %}">PLS</a></li>
                     <li><a href="{% url 'pcr' %}">PCR</a></li>
                     <li><a href="{% url 'scraping' %}">Scraping</a></li>
+                    <li><a href="{% url 'upload' %}">Upload</a></li>
                 </ul>
             </nav>
         </header>
@@ -35,7 +36,8 @@
             <header class="post-info">
                 <h2 class="post-title">Python & django</h2>
             </header>
-            <img src="/static/pls/img/aurora.jpg" alt="aurora">
+            <img src="{% static '/pls/img/aurora.jpg' %}" alt="aurora">
+            <!-- /static/pls/img/aurora.jpgと同じ -->
             <h3>環境構築</h3>
             <p>
                 Pythonのdjangoと呼ばれるフレームワークを使ってウェブページを作成しています。
