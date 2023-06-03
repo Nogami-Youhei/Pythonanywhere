@@ -23,7 +23,6 @@ from openpyxl.styles import Font
 from pathlib import Path
 import unicodedata
 from django.core.files.storage import FileSystemStorage
-import win32com.client as win32
 
 
 THIS_FOLDER = Path(__file__).parent.resolve()
@@ -293,114 +292,11 @@ def upload(request):
         fileobject = FileSystemStorage()
         fileobject.save(htmlfile.name, htmlfile)
         path = media_local_dir.joinpath(htmlfile.name)
-        fix_fig_number(path)
+        df = pd.read_csv(path, encoding='shift-jis')
+        df.iloc[0,0] = 'test'
+        df.to_csv(path, header=None, index=None)
         filename, filepath = htmlfile.name, path
         return FileResponse(open(filepath, 'rb'), as_attachment=True, filename=filename)
     
     return render(request, 'pls/upload.html')
 
-import pythoncom
-def fix_fig_number(path):
-    pythoncom.CoInitialize()
-    def my_index(l, x, default=False):
-        return l.index(x) if x in l else default
-
-    ppt_app = win32.gencache.EnsureDispatch("PowerPoint.Application")
-    presentation = ppt_app.Presentations.Open(str(path))
-
-    i = 1
-    j = 0
-
-    li1 = []
-    li2 = []
-    li3 = []
-    li4 = []
-    li5 = []
-
-    for slide in presentation.Slides:
-        for shape in slide.Shapes:
-            if shape.HasTextFrame:
-                text_frame = shape.TextFrame
-                for paragraph in text_frame.TextRange.Paragraphs():
-                    if '図' in paragraph.Text:
-                        if paragraph.Text.startswith('図'):
-                            li1.append(paragraph.Text)
-                            paragraph.Text = re.sub('図\d*', rf'図{i}', paragraph.Text.strip())
-                            i += 1
-                        else:
-                            li2.append(paragraph.Text)
-
-    if li2:                       
-        for k in range(len(li1)):
-            li3.append(re.search('図\d*', li1[k]).group())
-
-        for k in range(len(li2)):
-            li4.append(re.search('図\d*', li2[k]).group())
-
-        for k in li4:
-            li5.append(my_index(li3, k, 1))
-
-        li5 = np.array(li5) + 1
-
-        for slide in presentation.Slides:
-            for shape in slide.Shapes:
-                if shape.HasTextFrame:
-                    text_frame = shape.TextFrame
-                    for paragraph in text_frame.TextRange.Paragraphs():
-                        if '図' in paragraph.Text:
-                            if not paragraph.Text.startswith('図'):
-                                paragraph.Text = re.sub(r'図\d*', f'図{li5[j]}', li2[j].strip())
-                                j += 1
-
-    i = 1
-    j = 0
-
-    li1 = []
-    li2 = []
-    li3 = []
-    li4 = []
-    li5 = []
-
-    for slide in presentation.Slides:
-        for shape in slide.Shapes:
-            if shape.HasTextFrame:
-                text_frame = shape.TextFrame
-                for paragraph in text_frame.TextRange.Paragraphs():
-                    if '表' in paragraph.Text:
-                        if paragraph.Text.startswith('表'):
-                            li1.append(paragraph.Text)
-                            paragraph.Text = re.sub(r'表\d*', f'表{i}', paragraph.Text.strip())
-                            i += 1
-                        else:
-                            li2.append(paragraph.Text)
-
-    if li2:
-        for k in range(len(li1)):
-            li3.append(re.search(r'表\d*', li1[k]).group())
-
-        for k in range(len(li2)):
-            li4.append(re.search(r'表\d*', li2[k]).group())
-
-        for k in li4:
-            li5.append(my_index(li3, k, 1))
-
-        li5 = np.array(li5) + 1
-
-        for slide in presentation.Slides:
-            for shape in slide.Shapes:
-                if shape.HasTextFrame:
-                    text_frame = shape.TextFrame
-                    for paragraph in text_frame.TextRange.Paragraphs():
-                        if '表' in paragraph.Text:
-                            if not paragraph.Text.startswith('表'):
-                                paragraph.Text = re.sub(r'表\d*', f'表{li5[j]}', li2[j].strip())
-                                j += 1
-
-
-    presentation.Save()
-    presentation.Close()
-
-    ppt_app.Quit()
-
-    _ = os.system("taskkill /f /im POWERPNT.EXE")
-    pythoncom.CoUninitialize()
