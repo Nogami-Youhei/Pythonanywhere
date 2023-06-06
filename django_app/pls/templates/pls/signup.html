@@ -1,0 +1,23 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'pls/css/style.css' %}">
+    <title>ユーザー登録</title>
+</head>
+<body>
+    <h1>ユーザー登録</h1>
+    <form action="{% url 'signup' %}" method="post">
+    {% csrf_token %}
+        <table>
+        {{ form }}
+        <tr>
+        <th>
+        <p><input type="submit" value="登録"></p>
+        </th>
+        </tr>
+        </table>
+    </form>
+</body>
+</html>

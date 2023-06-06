@@ -156,6 +156,7 @@ label {
     display: block;
 }
 input[type="text"],
+input[type="number"],
 textarea {
     background: rgba(42, 42, 42, .5);
     border: 1px, #fff, solid;
@@ -190,6 +191,15 @@ input[type="submit"] {
 }
 label {
     text-align: right;
+}
+
+.message-wrapper p {
+    display: inline-block;
+}
+#message2 {
+    position: relative;
+    top: 10px;
+    left: 10px;
 }
 
 .select {

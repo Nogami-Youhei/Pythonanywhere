@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import FileResponse
 import numpy as np
 import pandas as pd
@@ -23,6 +23,10 @@ from openpyxl.styles import Font
 from pathlib import Path
 import unicodedata
 from django.core.files.storage import FileSystemStorage
+from .forms import SignupForm, LoginForm
+from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 
 THIS_FOLDER = Path(__file__).parent.resolve()
@@ -118,6 +122,7 @@ def pcr(request):
             }
 
     return render(request, 'pls/pcr.html', params)
+
 
 def scraping(request):
     try:
@@ -292,7 +297,7 @@ def upload(request):
         fileobject = FileSystemStorage()
         fileobject.save(htmlfile.name, htmlfile)
         path = media_local_dir.joinpath(htmlfile.name)
-        df = pd.read_csv(path, encoding='shift-jis')
+        df = pd.read_csv(path, encoding='shift_jis')
         df.iloc[0,0] = 'test'
         df.to_csv(path, header=None, index=None)
         filename, filepath = htmlfile.name, path
@@ -300,3 +305,240 @@ def upload(request):
     
     return render(request, 'pls/upload.html')
 
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect(to='/pls/user/')
+        
+    else:
+        form = SignupForm()
+    param = {
+        'form': form,
+        }
+    return render(request, 'pls/signup.html', param)
+
+def login_view(request):
+    if request.method == 'POST':
+        next = request.POST.get('next')
+        form = LoginForm(request, data=request.POST)
+
+        if form.is_valid():
+            user = form.get_user()
+
+            if user:
+                login(request, user)
+                if next == 'None':
+                    return redirect(to='/pls/user/')
+                else:
+                    return redirect(to=next)
+
+    else:
+        form = LoginForm()
+        next = request.GET.get('next')
+
+    params = {
+        'form': form,
+        'next': next,
+    }
+
+    return render(request, 'pls/login.html', params)
+
+def logout_view(request):
+    logout(request)
+
+    return render(request, 'pls/logout.html')
+
+@login_required
+def user_view(request):
+    user = request.user
+
+    param = {
+        'user': user
+    }
+
+    return render(request, 'pls/user.html', param)
+
+@login_required
+def other_view(request):
+    users = User.objects.exclude(username=request.user.username)
+
+    param = {
+        'users': users
+    }
+    
+    return render(request, 'pls/other.html', param)
+
+
+
+from .forms import UserForm
+from .models import Paper
+
+@login_required
+def scraping2(request):
+    try:
+        form = UserForm(request.POST)
+
+        def discriminate_jp_en(string):
+            if re.search(r'[ぁ-ん]+|[ァ-ヴー]+|[一-龠]+', string):
+                return False
+            else:
+                return True
+
+        
+        if (request.method == 'POST'):
+            if form.is_valid():
+                paper = Paper(
+                keywords=form.cleaned_data['keywords'],
+                number=form.cleaned_data['number'],
+                ja=form.cleaned_data['check'],
+                choices=form.cleaned_data['choices']
+                )
+                paper.save()
+
+                options = webdriver.ChromeOptions()
+                user_agent = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.2 Safari/605.1.15',
+                            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15',
+                            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36']
+
+                UA = user_agent[random.randrange(0, len(user_agent), 1)]
+                options.add_argument('--user-agent=' + UA)
+                options.add_argument('--no-sandbox')
+                options.add_argument('--headless')
+                options.add_argument("--disable-gpu")
+
+                with webdriver.Chrome(options=options) as driver:
+                    check = form.cleaned_data['check']
+                    i = 0
+                    result = []
+                    keyword = '+'.join(form.cleaned_data['keywords'].split())
+                    num = form.cleaned_data['number']
+
+                    url = 'https://www.jstage.jst.go.jp/result/global/-char/ja?globalSearchKey=' + keyword
+                    driver.get(url)
+                    html = driver.page_source.encode('utf-8')
+                    soup = BeautifulSoup(html, 'html.parser')
+                    html = driver.page_source.encode('utf-8')
+                    soup = BeautifulSoup(html, 'html.parser')
+                    sortby = form.cleaned_data['choices']
+                    Select(driver.find_element(By.NAME, 'sortby')).select_by_value(str(sortby))
+                    while True:
+                        url = driver.current_url
+                        html = driver.page_source.encode('utf-8')
+                        soup = BeautifulSoup(html, 'html.parser')
+                        elems = soup.find('ul', class_='search-resultslisting').find_all('li')
+                        if not elems:
+                            params = {
+                                'message': '検索条件に該当する記事が見つかりません。'
+                            }
+                            return render(request, 'pls/scraping.html', params)
+
+                        for elem in elems:
+                            line = pd.Series(index=['タイトル', 'URL', '学会誌', '出版年', '巻・ページ', '発行日', '公開日', '要約'], dtype=object)
+                            line.name = f'{i+1:03d}'
+                            anchor = elem.find('a').text
+                            if check and discriminate_jp_en(anchor):
+                                anchor = translate(anchor.strip(), 'ja')
+                            line[0] = anchor
+                            link = elem.find('a')['href']
+                            line[1] = link
+                            detail = re.split(r'[\n\t]+', elem.find('div', class_='searchlist-additional-info').text)
+                            line[2:4] = detail[1:3]
+                            line[-3:-1] = detail[-3:-1]
+                            line[4] = ', '.join(detail[3:-3])
+                            driver.get(link)
+                            html = driver.page_source.encode('utf-8')
+                            soup = BeautifulSoup(html, 'html.parser')
+                            abstract = soup.find('p', class_='global-para-14')
+                            if not abstract:
+                                line[-1] = ('要約なし')
+                            elif abstract.text == '\n':
+                                if not abstract.next_sibling:
+                                    line[-1] = ('要約なし')
+                                elif abstract.next_sibling.text == '\n':
+                                    line[-1] = ('要約なし')
+                                else:
+                                    sibling = abstract.next_sibling
+                                    if check and discriminate_jp_en(sibling.text):
+                                        sibling = translate(sibling.text.strip(), 'ja')
+                                        line[-1] = sibling.strip()
+                                    else:
+                                        line[-1] = sibling.text.strip()
+                            else:
+                                if check and discriminate_jp_en(abstract.text):
+                                    abstract = translate(abstract.text.strip(), 'ja')
+                                    line[-1] = abstract.strip()
+                                else:
+                                    line[-1] = abstract.text.strip()
+                            result.append(line)
+                            i += 1
+                            if i == num:
+                                break
+                        if i == num:
+                            break
+                        driver.get(url)
+                        ul = driver.find_element(By.XPATH, '//*[@id="search-pagination-wrap-top"]/div/div[1]/ul')
+                        button = ul.find_elements(By.TAG_NAME, 'li')[-2]
+                        if button.get_attribute('class') == 'inactive-page':
+                            break
+                        button.click()
+
+                    temp_dir = THIS_FOLDER.joinpath('temp')
+                    shutil.rmtree(temp_dir)
+                    os.makedirs(temp_dir, exist_ok=True)
+                    df = pd.concat(result, axis=1).T
+                    file_dir = temp_dir.joinpath(f'{keyword}.xlsx')
+                    df.to_excel(file_dir)
+
+                wb = openpyxl.load_workbook(file_dir)
+                ws = wb.active
+                ws.auto_filter.ref = "A1:I1"
+                ws.column_dimensions['B'].width = 20
+                ws.column_dimensions['C'].width = 25
+                ws.column_dimensions['D'].width = 15
+                ws.column_dimensions['E'].width = 15
+                ws.column_dimensions['F'].width = 15
+                ws.column_dimensions['G'].width = 15
+                ws.column_dimensions['H'].width = 15
+                ws.column_dimensions['I'].width = 50
+                wrap_text = xl.styles.Alignment(wrapText=True, vertical='center')
+
+                for row in range(2, ws.max_row+1):
+                    ws.row_dimensions[row].height = 100
+
+                for row in ws.iter_rows():
+                    for cell in row:
+                        cell.alignment = wrap_text
+
+                for cell in ws[f'I2:I{ws.max_row}']:
+                    cell[0].alignment = xl.styles.Alignment(wrapText=True, vertical='top')
+
+                for cell in ws['A']:
+                    cell.alignment = xl.styles.Alignment(wrapText=True, horizontal='center', vertical='center')
+
+                for cell in ws[f'C2:C{ws.max_row}']:
+                    cell[0].hyperlink = cell[0].value
+                    cell[0].font = Font(color="0000FF", underline="single")
+
+                wb.save(file_dir)
+
+                filename, filepath = f'{keyword}.xlsx', file_dir
+                return FileResponse(open(filepath, 'rb'), as_attachment=True, filename=filename)
+        
+        else:
+            form = UserForm()
+
+    
+    except Exception as e:
+            params = {
+                'message': e,
+            }
+
+    params = {
+        'form': form,
+        }
+    return render(request, 'pls/scraping2.html', params)

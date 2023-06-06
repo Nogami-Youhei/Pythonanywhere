@@ -34,12 +34,23 @@
     <p class="outline">CSVファイルをアップロード
     </p>
     <br>
-    <form action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    <table>
+    <tr>
+    <td>
     <input type="file" name="htmlfile">
-    <br>
-    <br>
+    </td>
+    </tr>
+    <tr>
+    <td>
     <button type="submit", class="button">アップロード</button>
+    {% if upload_file_url %}
+    <p>アップロード時刻<a href="{{ upload_file_url }}">{{ upload_file_url }}</a></p>
+    {% endif %}
+    </td>
+    </tr>
+    </table>
     </form>
     </div>
     <footer>

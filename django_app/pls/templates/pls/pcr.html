@@ -39,19 +39,19 @@
         <table>
         {% csrf_token %}
         <tr><th>
-        <label for="目的変数">目的変数: </label>
+        <label for="目的変数" class="label">目的変数: </label>
         </th>
         <td>
         <input id="目的変数" type="text" name="目的変数" size="40" placeholder="エクセルからコピペ">
         </td></tr>
         <tr><th>
-        <label for="説明変数">説明変数: </label>
+        <label for="説明変数" class="label">説明変数: </label>
         </th>
         <td>
         <textarea id="説明変数" name="説明変数" rows="4" cols="40" placeholder="エクセルからコピペ"></textarea>
         </td></tr>
         <tr><th>
-        <label for="n_components">主成分の数: </label>
+        <label for="n_components" class="label">主成分の数: </label>
         </th><td>
         <select name="n_components" class=button2 id="n_components">
         {% for i in range1 %}
