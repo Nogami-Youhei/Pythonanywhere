@@ -38,6 +38,7 @@
     <br>GrobalProtectを切ってWi-Fiで再度試してみてください
     </p>
     <br>
+    <form action="{% url 'scraping2' %}" method="post">
     {% csrf_token %}
     <table>
     <tr>

@@ -378,7 +378,7 @@ def other_view(request):
 from .forms import UserForm
 from .models import Paper
 
-@login_required
+
 def scraping2(request):
     try:
         form = UserForm(request.POST)
