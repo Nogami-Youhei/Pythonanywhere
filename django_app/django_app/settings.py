@@ -127,3 +127,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media_local"
 
 LOGIN_URL = '/pls/login/'
+
+SESSION_COOKIE_AGE = 12096000

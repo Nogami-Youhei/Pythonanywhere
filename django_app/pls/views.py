@@ -31,12 +31,19 @@ from django.contrib.auth.decorators import login_required
 
 THIS_FOLDER = Path(__file__).parent.resolve()
 
+@login_required
 def index(request):
-    return render(request, 'pls/index.html')
+    user = request.user.username
+    params = {
+        user: user
+        }
+    return render(request, 'pls/index.html', params)
 
+@login_required
 def outline(request):
     return render(request, 'pls/outline.html')
 
+@login_required
 def pls(request):
     params = {
         'range1': range(1, 11),
@@ -77,6 +84,7 @@ def pls(request):
 
     return render(request, 'pls/pls.html', params)
 
+@login_required
 def pcr(request):
     params = {
         'range1': range(1, 11),
@@ -123,8 +131,8 @@ def pcr(request):
 
     return render(request, 'pls/pcr.html', params)
 
-
-def scraping(request):
+@login_required
+def scraping0(request):
     try:
         if (request.method == 'POST'):
             def discriminate_jp_en(string):
@@ -153,14 +161,14 @@ def scraping(request):
                     params = {
                         'message': '文字列を入力してください。'
                         }
-                    return render(request, 'pls/scraping.html', params)
+                    return render(request, 'pls/scraping0.html', params)
 
                 num = request.POST['num']
                 if not num.isdigit():
                     params = {
                         'message': '数字を入力してください。'
                         }
-                    return render(request, 'pls/scraping.html', params)
+                    return render(request, 'pls/scraping0.html', params)
                 
                 unicodedata.normalize('NFKC', num)
                 num = int(num)
@@ -168,7 +176,7 @@ def scraping(request):
                     params = {
                         'message': '0より大きい数字を入力してください。'
                         }
-                    return render(request, 'pls/scraping.html', params)
+                    return render(request, 'pls/scraping0.html', params)
 
                 url = 'https://www.jstage.jst.go.jp/result/global/-char/ja?globalSearchKey=' + keyword
                 driver.get(url)
@@ -187,7 +195,7 @@ def scraping(request):
                         params = {
                             'message': '検索条件に該当する記事が見つかりません。'
                         }
-                        return render(request, 'pls/scraping.html', params)
+                        return render(request, 'pls/scraping0.html', params)
 
                     for elem in elems:
                         line = pd.Series(index=['タイトル', 'URL', '学会誌', '出版年', '巻・ページ', '発行日', '公開日', '要約'], dtype=object)
@@ -285,8 +293,9 @@ def scraping(request):
             params = {
                 'message': e,
             }
-    return render(request, 'pls/scraping.html')
+    return render(request, 'pls/scraping0.html')
 
+@login_required
 def upload(request):
     if request.method == 'POST' and request.FILES.get('htmlfile'):
         BASE_DIR = Path(__file__).resolve().parent.parent
@@ -313,7 +322,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect(to='/pls/user/')
+            return redirect(to='/pls/')
         
     else:
         form = SignupForm()
@@ -333,7 +342,7 @@ def login_view(request):
             if user:
                 login(request, user)
                 if next == 'None':
-                    return redirect(to='/pls/user/')
+                    return redirect(to='/pls/')
                 else:
                     return redirect(to=next)
 
@@ -353,34 +362,14 @@ def logout_view(request):
 
     return render(request, 'pls/logout.html')
 
-@login_required
-def user_view(request):
-    user = request.user
-
-    param = {
-        'user': user
-    }
-
-    return render(request, 'pls/user.html', param)
-
-@login_required
-def other_view(request):
-    users = User.objects.exclude(username=request.user.username)
-
-    param = {
-        'users': users
-    }
-    
-    return render(request, 'pls/other.html', param)
-
-
 
 from .forms import UserForm
 from .models import Paper
 
-
-def scraping2(request):
+@login_required
+def scraping(request):
     try:
+        user = request.user.username
         form = UserForm(request.POST)
 
         def discriminate_jp_en(string):
@@ -393,6 +382,7 @@ def scraping2(request):
         if (request.method == 'POST'):
             if form.is_valid():
                 paper = Paper(
+                user=user,
                 keywords=form.cleaned_data['keywords'],
                 number=form.cleaned_data['number'],
                 ja=form.cleaned_data['check'],
@@ -402,8 +392,8 @@ def scraping2(request):
 
                 options = webdriver.ChromeOptions()
                 user_agent = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.2 Safari/605.1.15',
-                            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15',
-                            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36']
+                              'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15',
+                              'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36']
 
                 UA = user_agent[random.randrange(0, len(user_agent), 1)]
                 options.add_argument('--user-agent=' + UA)
@@ -534,11 +524,29 @@ def scraping2(request):
 
     
     except Exception as e:
-            params = {
-                'message': e,
+        params = {
+            'message': e,
             }
+        return render(request, 'pls/scraping.html', params)
 
     params = {
         'form': form,
+        'name': user,
         }
-    return render(request, 'pls/scraping2.html', params)
+    return render(request, 'pls/scraping.html', params)
+
+
+def list(request):
+    if (request.method == 'POST'):
+        data = request.POST.get('data')
+        paper = Paper.objects.get(id=int(data))
+        print(paper)
+        paper.delete()
+        return redirect(to='list')
+    
+    papers = Paper.objects.all()
+
+    param = {
+        'papers': papers,
+    }
+    return render(request, 'pls/list.html', param)

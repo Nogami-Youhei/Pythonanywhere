@@ -1,103 +1,73 @@
+{% extends 'pls/base.html' %}        
+{% block title %}
+<title>Scraping</title>
+{% endblock %}
+{% block main %}
 {% load static %}
-<!doctype html>
-<html lang="ja">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Scraping</title>
-    <meta name="description" content="論文のスクレイピングを簡単に実行">
-    <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
-    <link rel="stylesheet" type="text/css" href="{% static 'pls/css/style.css' %}">
-    <link rel="icon" href="/static/pls/img/favicon.png" type="image/x-icon">
-</head>
-<body>
-    <div class="wrapper2">
-    <div id="outline" class="big-bg">
-        <header class="page-header wrapper">
-            <h1><a href="{% url 'index' %}"><img class="logo" src="/static/pls/img/Machine.png" alt="Machine"></a></h1>
-            <nav>
-                <ul class="main-nav">
-                    <li><a href="{% url 'outline' %}">OutLine</a></li>
-                    <li><a href="{% url 'pls' %}">PLS</a></li>
-                    <li><a href="{% url 'pcr' %}">PCR</a></li>
-                    <li><a href="{% url 'scraping' %}">Scraping</a></li>
-                    <li><a href="{% url 'upload' %}">Upload</a></li>
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
-                </ul>
-            </nav>
-        </header>
-        <div class="wrapper">
-            <h2 class="page-title">論文スクレイピング</h2>
-            <hr>
-        </div>
+    <div class="wrapper">
+        <h2 class="page-title">論文スクレイピング</h2>
+        <hr>
+    </div>
     </div>
     <div class="pcr-contents wrapper">
-    <p class="outline">J-STAGEよりダウンロードする論文リストの「キーワード」と「論文数」を入力してください
+    <p class="outline"><b>ようこそ{{ name }}さん</b>
+    <br>J-STAGEよりダウンロードする論文リストの「キーワード」と「論文数」を入力してください
     <br>論文リストがダウンロードされるまで数分かかることがあります
     <br>社内のLANもしくはGlobalProtectだとまれにサーバーエラーが発生するようです
     <br>GrobalProtectを切ってWi-Fiで再度試してみてください
     </p>
+    <br>
     <form action="{% url 'scraping' %}" method="post">
-        <table>
-        {% csrf_token %}
-        <tr>
-        <th>
-        <label for="keyword" class="label">キーワード： </label>
-        </th>
-        <td>
-        <input id="keyword" type="text" name="keyword" size="40">
-        </td>
-        </tr>
-        <tr>
-        <th>
-        <label for="num" class="label">論文数： </label>
-        </th>
-        <td>
-        <input id="num" type="text" name="num" size="40">
-        </td>
-        </tr>
-        <tr>
-        <th>
-        <label for="check" class="label">日本語訳： </label>
-        </th>
-        <td>
-        <input id="check" type="checkbox" name="check">
-        </td>
-        </tr>
-        <tr>
-        <th>
-        <label for="select" class="label">取得順： </label>   
-        </th>
-        <td>
-        <div class="select-wrapper">
-        <select id="select" name="select" class="select">
-            <option value="1" selected>ヒット率</option>
-            <option value="5">発行日[新しい順]</option>
-            <option value="6">発行日[古い順]</option>
-            <option value="2">公開日[新しい順]</option>
-            <option value="3">公開日[古い順]</option>
-            <option value="4">資料名順</option>
-        </select>
-        </div>
-        </td>
-        </tr>
-        <tr>
-        <td>
-        <input id="btn" type="submit" class="button" value="click">
-        </td>
-        <td>
-        <p id="message" class="message">{{ message|safe }}</p>
-        </td>
-        </tr>
-        </table>
+    {% csrf_token %}
+    <table>
+    <tr>
+    <th>
+    {{ form.keywords.label_tag }}
+    </th>
+    <td>
+    {{ form.keywords }}
+    </td>
+    </tr>
+    <tr>
+    <th>
+    {{ form.number.label_tag }}
+    </th>
+    <td>
+    {{ form.number }}
+    </td>
+    </tr>
+    <tr>
+    <th>
+    {{ form.check.label_tag }}
+    </th>
+    <td>
+    {{ form.check }}
+    </td>
+    </tr>
+    <tr>
+    <th>
+    {{ form.choices.label_tag }}
+    </th>
+    <td>
+    <div class="select-wrapper">
+    {{ form.choices }}
+    </div>
+    </td>
+    </tr>
+    <tr>
+    <th>
+    </th>
+    <td>
+    <div class="message-wrapper">
+    <p><input id="btn" type="submit" class="button" value="Download"></p>
+    <p id="message2" class="message">{{ message|safe }}</p>
+    </div>
+    </td>
+    <td>
+    </td>
+    </tr>
+    </table>
     </form>
     </div>
-    <footer>
-        <div class="wrapper">
-            <p><small>&copy; 2023 Nogami-Youhei</small></p>
-        </div>
-    </footer>
-    </div>
 <script src="{% static 'pls/js/scraping.js' %}"></script>
-</body>
-</html>
+{% endblock %}

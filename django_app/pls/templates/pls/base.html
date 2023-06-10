@@ -5,14 +5,16 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>機械学習</title>
     <meta name="description" content="機械学習を簡単に実行">
+    {% block title %}
+    {% endblock %}
     <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'pls/css/style.css' %}">
-    <link rel="icon" href="/static/pls/img/favicon.png" type="image/png">
+    <link rel="icon" href="/static/pls/img/favicon.png" type="image/x-icon">
 </head>
 <body>
-    <div id="home" class="big-bg">
+    <div class="wrapper2">
+    <div id="outline" class="big-bg">
         <header class="page-header wrapper">
             <h1><a href="{% url 'index' %}"><img class="logo" src="/static/pls/img/Machine.png" alt="Machine"></a></h1>
             <nav>
@@ -27,16 +29,13 @@
                 </ul>
             </nav>
         </header>
-        <div class="home-content wrapper">
-            <h2 class="page-title2"><span>P</span>ython<br><span>M</span>achine <span>L</span>earning</h2>
-            <hr>
-            <p>ようこそ{{ user }}さん</p>
-            <p>このサイトでは機械学習を簡単に実行できます</p>
-            <a class="button" href="{% url 'outline' %}">概要</a>
-        </div>
+        {% block main %}
+        {% endblock %}
+        <footer>
+            <div class="wrapper">
+                <p><small>&copy; 2023 Nogami-Youhei</small></p>
+            </div>
+        </footer>
     </div>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-<script src="{% static 'pls/js/index.js' %}"></script>
 </body>
 </html>

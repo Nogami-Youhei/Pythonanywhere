@@ -1,35 +1,12 @@
-{% load static %}
-<!doctype html>
-<html lang="ja">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>PLS</title>
-    <meta name="description" content="機械学習を簡単に実行">
-    <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
-    <link rel="stylesheet" type="text/css" href="{% static 'pls/css/style.css' %}">
-    <link rel="icon" href="/static/pls/img/favicon.png" type="image/x-icon">
-</head>
-<body>
-    <div class="wrapper2">
-    <div id="outline" class="big-bg">
-        <header class="page-header wrapper">
-            <h1><a href="{% url 'index' %}"><img class="logo" src="/static/pls/img/Machine.png" alt="Machine"></a></h1>
-            <nav>
-                <ul class="main-nav">
-                    <li><a href="{% url 'outline' %}">OutLine</a></li>
-                    <li><a href="{% url 'pls' %}">PLS</a></li>
-                    <li><a href="{% url 'pcr' %}">PCR</a></li>
-                    <li><a href="{% url 'scraping' %}">Scraping</a></li>
-                    <li><a href="{% url 'upload' %}">Upload</a></li>
-                </ul>
-            </nav>
-        </header>
-        <div class="wrapper">
-            <h2 class="page-title">部分的最小2乗回帰（PLS）</h2>
-            <hr>
-        </div>
+{% extends 'pls/base.html' %}        
+{% block title %}
+<title>PLS</title>
+{% endblock %}
+{% block main %}
+    <div class="wrapper">
+        <h2 class="page-title">部分的最小2乗回帰（PLS）</h2>
+        <hr>
+    </div>
     </div>
     <div class="pcr-contents wrapper">
     <p class="outline">部分的最小2乗回帰（PLS）における主成分は、目的変数と主成分の共分散が最大になるように作成されます。</p>
@@ -71,11 +48,4 @@
     <p>{{ R2|safe }}</p>
     </div>
     </div>
-    <footer>
-        <div class="wrapper">
-            <p><small>&copy; 2023 Nogami-Youhei</small></p>
-        </div>
-    </footer>
-    </div>
-</body>
-</html>
+{% endblock %}

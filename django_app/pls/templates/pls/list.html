@@ -1,0 +1,64 @@
+{% extends 'pls/base.html' %}        
+{% block title %}
+<title>List</title>
+{% endblock %}
+{% block main %}
+
+<div class="wrapper">
+    <h2 class="page-title">論文スクレイピング</h2>
+    <hr>
+</div>
+</div>
+<div class="pcr-contents wrapper">
+<table class="list">
+    <tr>
+        <th>ID</th>
+        <th>ユーザー名</th>
+        <th>日付</th>
+        <th>キーワード</th>
+        <th>論文数</th>
+        <th>日本語訳</th>
+        <th>取得順</th>
+        <th>削除ボタン</th>
+    </tr>
+{% for paper in papers %}
+    <tr>
+        <td>{{ paper.id }}</td>
+        <td>{{ paper.user }}</td>
+        <td>{{ paper.date }}</td>
+        <td>{{ paper.keywords }}</td>
+        <td>{{ paper.number }}</td>
+        {% if paper.ja == 0 %}
+        <td>なし</td>
+        {% else %}
+        <td>あり</td>
+        {% endif %}
+
+        {% if paper.choices == '1' %}
+        <td>ヒット率</td>
+        {% elif paper.choices == '5' %}
+        <td>発行日[新しい順]</td>
+        {% elif paper.choices == '6' %}
+        <td>発発行日[古い順]</td>
+        {% elif paper.choices == '2' %}
+        <td>公開日[新しい順]</td>
+        {% elif paper.choices == '3' %}
+        <td>公開日[古い順]</td>
+        {% elif paper.choices == '4' %}
+        <td>資料名順</td>
+        {% else %}
+        <td>不明</td>
+        {% endif %}
+
+        <td>
+        <form action="{% url 'list' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" value="{{ paper.id }}" name="data">
+        <input type="submit" value="削除" class="button3">
+        </form>
+        </td>
+    </tr>
+{% endfor %}
+</table>
+</div>
+{% endblock %}

@@ -3,10 +3,44 @@
 <html lang="ja">
 <head>
     <meta charset="utf-8">
-    <title>ログアウト</title>
+    <meta name="viewport" content="width=device-width">
+    <title>Logout</title>
+    <meta name="description" content="ログアウト">
+    <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'pls/css/style.css' %}">
+    <link rel="icon" href="/static/pls/img/favicon.png" type="image/x-icon">
 </head>
 <body>
-    <p>ログアウトしました...</p>
-    <p><a href="{% url 'login' %}">ログイン</a></p>
+    <div class="wrapper2">
+    <div id="outline" class="big-bg">
+        <header class="page-header wrapper">
+            <h1><a href="{% url 'index' %}"><img class="logo" src="/static/pls/img/Machine.png" alt="Machine"></a></h1>
+        </header>
+        <div class="wrapper">
+            <h2 class="page-title">Logout</h2>
+            <hr>
+        </div>
+    </div>
+    <div class="pcr-contents wrapper">
+    <table>
+    <tr>
+    <td>
+    <p class="outline">ログアウトしました...</p>
+    </td>
+    </tr>
+    <tr>
+    <td>
+    <p><a href="{% url 'login' %}" class="button">ログイン</a></p>
+    </td>
+    </tr>
+    </table>
+    </div>
+    <footer>
+        <div class="wrapper">
+            <p><small>&copy; 2023 Nogami-Youhei</small></p>
+        </div>
+    </footer>
+    </div>
+<script src="{% static 'pls/js/scraping.js' %}"></script>
 </body>
 </html>

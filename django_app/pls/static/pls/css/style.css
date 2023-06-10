@@ -38,7 +38,7 @@ img {
     justify-content: space-between;
 }
 .wrapper {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 4%;
 }
@@ -157,6 +157,8 @@ label {
 }
 input[type="text"],
 input[type="number"],
+input[type="email"],
+input[type="password"],
 textarea {
     background: rgba(42, 42, 42, .5);
     border: 1px, #fff, solid;
@@ -178,6 +180,19 @@ input[type="submit"] {
     border-radius: 5px;
     padding: 18px 32px;
 }
+.button3 {
+    display: block;
+    font-size: 1rem;
+    background: #818181;
+    color: #fff;
+    border-radius: 5px;
+    padding: 9px 18px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.button3:hover {
+    background-color: #424242;
+}
 .result p {
     padding: 30px;
     font-size: 1.2rem;
@@ -196,6 +211,26 @@ label {
 .message-wrapper p {
     display: inline-block;
 }
+
+.button-wrapper {
+    display: flex;
+}
+
+.button-wrapper input,
+.button-wrapper a {
+    display: inline-block;
+    width: 180px;
+    height: 60px;
+    margin: 20px;
+    padding: 10px;
+    text-align: center;
+}
+
+.signup th {
+    vertical-align: top;
+    padding-top: 10px;
+}
+
 #message2 {
     position: relative;
     top: 10px;
@@ -241,6 +276,29 @@ label {
     border-top-color: #aaa;
   }
 
+  .list, .list td, .list th {
+    border-width: 1.5px 0px;
+    border-color: #555;
+    border-style: solid;
+    border-collapse: collapse;
+    padding: 1em;
+    margin: 1em;
+  }
+  .list tr:hover {
+    background-color: #ddd;
+  }
+
+  .list th {
+    background-color: #bbb;
+  }
+
+  .list {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+
+  
 @media (max-width: 600px) {
     .page-header {
         flex-direction: column;

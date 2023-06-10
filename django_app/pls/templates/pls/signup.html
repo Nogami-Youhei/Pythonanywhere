@@ -3,21 +3,43 @@
 <html lang="ja">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>SignUp</title>
+    <meta name="description" content="ユーザー登録">
+    <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'pls/css/style.css' %}">
-    <title>ユーザー登録</title>
+    <link rel="icon" href="/static/pls/img/favicon.png" type="image/x-icon">
 </head>
 <body>
-    <h1>ユーザー登録</h1>
+    <div class="wrapper2">
+    <div id="outline" class="big-bg">
+        <header class="page-header wrapper">
+            <h1><a href="{% url 'index' %}"><img class="logo" src="/static/pls/img/Machine.png" alt="Machine"></a></h1>
+        </header>
+        <div class="wrapper">
+            <h2 class="page-title">SignUp</h2>
+            <hr>
+        </div>
+    </div>
+    <div class="pcr-contents wrapper">
     <form action="{% url 'signup' %}" method="post">
     {% csrf_token %}
-        <table>
+        <table class="signup">
         {{ form }}
         <tr>
         <th>
-        <p><input type="submit" value="登録"></p>
+        <p><input type="submit" class="button" value="登録"></p>
         </th>
         </tr>
         </table>
     </form>
+    </div>
+    <footer>
+        <div class="wrapper">
+            <p><small>&copy; 2023 Nogami-Youhei</small></p>
+        </div>
+    </footer>
+    </div>
+<script src="{% static 'pls/js/scraping.js' %}"></script>
 </body>
 </html>
