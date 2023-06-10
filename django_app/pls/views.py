@@ -545,8 +545,10 @@ def list(request):
         return redirect(to='list')
     
     papers = Paper.objects.all()
+    user = request.user.username
 
     param = {
         'papers': papers,
+        'user': user
     }
     return render(request, 'pls/list.html', param)

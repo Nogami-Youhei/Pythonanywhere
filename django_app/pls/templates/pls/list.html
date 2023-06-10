@@ -19,7 +19,9 @@
         <th>論文数</th>
         <th>日本語訳</th>
         <th>取得順</th>
+        {% if user == 'nogami' %}
         <th>削除ボタン</th>
+        {% endif %}
     </tr>
 {% for paper in papers %}
     <tr>
@@ -50,6 +52,7 @@
         <td>不明</td>
         {% endif %}
 
+        {% if user == 'nogami' %}
         <td>
         <form action="{% url 'list' %}" method="post">
         {% csrf_token %}
@@ -57,6 +60,7 @@
         <input type="submit" value="削除" class="button3">
         </form>
         </td>
+        {% endif %}
     </tr>
 {% endfor %}
 </table>
