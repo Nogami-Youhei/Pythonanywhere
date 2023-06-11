@@ -14,7 +14,7 @@ class LoginForm(AuthenticationForm):
 
 class UserForm(forms.Form):
     keywords = forms.CharField(label='キーワード', max_length=100)
-    number = forms.IntegerField(label='論文数', min_value=1, max_value=200, widget=forms.NumberInput(attrs={'class': 'my-class'}))
+    number = forms.IntegerField(label='論文数', min_value=1, max_value=500, widget=forms.NumberInput(attrs={'class': 'my-class'}))
     check = forms.BooleanField(
         label='日本語訳',
         required=False
