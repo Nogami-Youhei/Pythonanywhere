@@ -54,7 +54,7 @@
 
         {% if user == 'nogami' %}
         <td>
-        <form action="{% url 'list' %}" method="post">
+        <form action="{% url 'datalist' %}" method="post">
         {% csrf_token %}
         <input type="hidden" value="{{ paper.id }}" name="data">
         <input type="submit" value="削除" class="button3">

@@ -19,8 +19,8 @@ img {
 }
 .main-nav {
     display: flex;
+    flex-wrap: wrap;
     font-size: 1.25rem;
-    text-transform: uppercase;
     margin-top: 34px;
     list-style: none;
 }
@@ -72,6 +72,7 @@ img {
     color: #fff;
     border-radius: 5px;
     padding: 18px 32px;
+    border: 0.5px solid black;
 }
 .button:hover {
     background-color: #424242;
@@ -160,12 +161,13 @@ input[type="number"],
 input[type="email"],
 input[type="password"],
 textarea {
-    background: rgba(42, 42, 42, .5);
+    background: rgba(42, 42, 42, .2);
     border: 1px, #fff, solid;
     border-radius: 5px;
     padding: 10px;
     font-size: 1rem;
     width: 40vw;
+    border: 0.5px solid #999;
 }
 input[type="submit"] {
     border: none;
@@ -179,6 +181,7 @@ input[type="submit"] {
     color: #fff;
     border-radius: 5px;
     padding: 18px 32px;
+    border: 0.5px solid black;
 }
 .button3 {
     display: block;
@@ -189,6 +192,7 @@ input[type="submit"] {
     padding: 9px 18px;
     margin-left: auto;
     margin-right: auto;
+    border: 0.5px solid black;
 }
 .button3:hover {
     background-color: #424242;
@@ -214,6 +218,7 @@ label {
 
 .button-wrapper {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .button-wrapper input,
@@ -297,8 +302,72 @@ label {
     margin-left: auto;
   }
 
-
+  .params input {
+    background: rgba(42, 42, 42, .2);
+    border: 1px, #fff, solid;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1rem;
+    width: 9vw;
+    text-align: center;
+  }
+  .params th {
+    text-align: right;
+    font-size: 1.2em;
+  }
+  th.header{
+    text-align: center;
+  }
+  .shap-button input {
+    position: relative;
+    left: 200px;
+    border: 0.5px solid black;
+  }
+  .shap-button p {
+    position: relative;
+    left: 200px;
+    padding: 20px;
+    color: red;
+    font-size: 1.2em;
+  }
+  .target input{
+    width: 100%;
+    text-align: left;
+  }
   
+  table.result {
+    margin-top: 100px;
+    margin-bottom: 50px;
+    position: relative;
+    left: 100px
+  }
+
+  .result td {
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  .result th {
+    text-align: right;
+    font-size: 1.2em;
+  }
+
+  .result, .result td, .result th {
+    border-width: 1.5px 0px;
+    border-color: #555;
+    border-style: solid;
+    border-collapse: collapse;
+    padding: 1em;
+    margin: 1em;
+  }
+  .result tr:not(:first-child):hover {
+    background-color: #eee;
+  }
+  .result tr:first-child {
+    background-color: #ddd;
+  }
+
+
 @media (max-width: 600px) {
     .page-header {
         flex-direction: column;

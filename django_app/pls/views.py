@@ -131,169 +131,6 @@ def pcr(request):
 
     return render(request, 'pls/pcr.html', params)
 
-@login_required
-def scraping0(request):
-    try:
-        if (request.method == 'POST'):
-            def discriminate_jp_en(string):
-                if re.search(r'[ぁ-ん]+|[ァ-ヴー]+|[一-龠]+', string):
-                    return False
-                else:
-                    return True
-
-            options = webdriver.ChromeOptions()
-            user_agent = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.2 Safari/605.1.15',
-                        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15',
-                        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36']
-
-            UA = user_agent[random.randrange(0, len(user_agent), 1)]
-            options.add_argument('--user-agent=' + UA)
-            options.add_argument('--no-sandbox')
-            options.add_argument('--headless')
-            options.add_argument("--disable-gpu")
-
-            with webdriver.Chrome(options=options) as driver:
-                check = request.POST.get('check')
-                i = 0
-                result = []
-                keyword = '+'.join(request.POST['keyword'].split())
-                if re.fullmatch(r'\s*', keyword):
-                    params = {
-                        'message': '文字列を入力してください。'
-                        }
-                    return render(request, 'pls/scraping0.html', params)
-
-                num = request.POST['num']
-                if not num.isdigit():
-                    params = {
-                        'message': '数字を入力してください。'
-                        }
-                    return render(request, 'pls/scraping0.html', params)
-                
-                unicodedata.normalize('NFKC', num)
-                num = int(num)
-                if num <= 0:
-                    params = {
-                        'message': '0より大きい数字を入力してください。'
-                        }
-                    return render(request, 'pls/scraping0.html', params)
-
-                url = 'https://www.jstage.jst.go.jp/result/global/-char/ja?globalSearchKey=' + keyword
-                driver.get(url)
-                html = driver.page_source.encode('utf-8')
-                soup = BeautifulSoup(html, 'html.parser')
-                html = driver.page_source.encode('utf-8')
-                soup = BeautifulSoup(html, 'html.parser')
-                sortby = request.POST.get('select')
-                Select(driver.find_element(By.NAME, 'sortby')).select_by_value(str(sortby))
-                while True:
-                    url = driver.current_url
-                    html = driver.page_source.encode('utf-8')
-                    soup = BeautifulSoup(html, 'html.parser')
-                    elems = soup.find('ul', class_='search-resultslisting').find_all('li')
-                    if not elems:
-                        params = {
-                            'message': '検索条件に該当する記事が見つかりません。'
-                        }
-                        return render(request, 'pls/scraping0.html', params)
-
-                    for elem in elems:
-                        line = pd.Series(index=['タイトル', 'URL', '学会誌', '出版年', '巻・ページ', '発行日', '公開日', '要約'], dtype=object)
-                        line.name = f'{i+1:03d}'
-                        anchor = elem.find('a').text
-                        if check and discriminate_jp_en(anchor):
-                            anchor = translate(anchor.strip(), 'ja')
-                        line[0] = anchor
-                        link = elem.find('a')['href']
-                        line[1] = link
-                        detail = re.split(r'[\n\t]+', elem.find('div', class_='searchlist-additional-info').text)
-                        line[2:4] = detail[1:3]
-                        line[-3:-1] = detail[-3:-1]
-                        line[4] = ', '.join(detail[3:-3])
-                        driver.get(link)
-                        html = driver.page_source.encode('utf-8')
-                        soup = BeautifulSoup(html, 'html.parser')
-                        abstract = soup.find('p', class_='global-para-14')
-                        if not abstract:
-                            line[-1] = ('要約なし')
-                        elif abstract.text == '\n':
-                            if not abstract.next_sibling:
-                                line[-1] = ('要約なし')
-                            elif abstract.next_sibling.text == '\n':
-                                line[-1] = ('要約なし')
-                            else:
-                                sibling = abstract.next_sibling
-                                if check and discriminate_jp_en(sibling.text):
-                                    sibling = translate(sibling.text.strip(), 'ja')
-                                    line[-1] = sibling.strip()
-                                else:
-                                    line[-1] = sibling.text.strip()
-                        else:
-                            if check and discriminate_jp_en(abstract.text):
-                                abstract = translate(abstract.text.strip(), 'ja')
-                                line[-1] = abstract.strip()
-                            else:
-                                line[-1] = abstract.text.strip()
-                        result.append(line)
-                        i += 1
-                        if i == num:
-                            break
-                    if i == num:
-                        break
-                    driver.get(url)
-                    ul = driver.find_element(By.XPATH, '//*[@id="search-pagination-wrap-top"]/div/div[1]/ul')
-                    button = ul.find_elements(By.TAG_NAME, 'li')[-2]
-                    if button.get_attribute('class') == 'inactive-page':
-                        break
-                    button.click()
-
-                temp_dir = THIS_FOLDER.joinpath('temp')
-                shutil.rmtree(temp_dir)
-                os.makedirs(temp_dir, exist_ok=True)
-                df = pd.concat(result, axis=1).T
-                file_dir = temp_dir.joinpath(f'{keyword}.xlsx')
-                df.to_excel(file_dir)
-
-            wb = openpyxl.load_workbook(file_dir)
-            ws = wb.active
-            ws.auto_filter.ref = "A1:I1"
-            ws.column_dimensions['B'].width = 20
-            ws.column_dimensions['C'].width = 25
-            ws.column_dimensions['D'].width = 15
-            ws.column_dimensions['E'].width = 15
-            ws.column_dimensions['F'].width = 15
-            ws.column_dimensions['G'].width = 15
-            ws.column_dimensions['H'].width = 15
-            ws.column_dimensions['I'].width = 50
-            wrap_text = xl.styles.Alignment(wrapText=True, vertical='center')
-
-            for row in range(2, ws.max_row+1):
-                ws.row_dimensions[row].height = 100
-
-            for row in ws.iter_rows():
-                for cell in row:
-                    cell.alignment = wrap_text
-
-            for cell in ws[f'I2:I{ws.max_row}']:
-                cell[0].alignment = xl.styles.Alignment(wrapText=True, vertical='top')
-
-            for cell in ws['A']:
-                cell.alignment = xl.styles.Alignment(wrapText=True, horizontal='center', vertical='center')
-
-            for cell in ws[f'C2:C{ws.max_row}']:
-                cell[0].hyperlink = cell[0].value
-                cell[0].font = Font(color="0000FF", underline="single")
-
-            wb.save(file_dir)
-
-            filename, filepath = f'{keyword}.xlsx', file_dir
-            return FileResponse(open(filepath, 'rb'), as_attachment=True, filename=filename)
-    
-    except Exception as e:
-            params = {
-                'message': e,
-            }
-    return render(request, 'pls/scraping0.html')
 
 @login_required
 def upload(request):
@@ -536,13 +373,13 @@ def scraping(request):
     return render(request, 'pls/scraping.html', params)
 
 
-def list(request):
+def datalist(request):
     if (request.method == 'POST'):
         data = request.POST.get('data')
         paper = Paper.objects.get(id=int(data))
         print(paper)
         paper.delete()
-        return redirect(to='list')
+        return redirect(to='datalist')
     
     papers = Paper.objects.all()
     user = request.user.username
@@ -551,4 +388,114 @@ def list(request):
         'papers': papers,
         'user': user
     }
-    return render(request, 'pls/list.html', param)
+    return render(request, 'pls/datalist.html', param)
+
+from .forms import ShapForm
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+import shap
+import matplotlib.pyplot as plt
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import KFold
+
+@login_required
+def shap_view(request):
+    if request.method == 'POST':
+        try:
+            form = ShapForm(request.POST)
+            if form.is_valid():
+                target = form.cleaned_data.get('target')
+                feature = form.cleaned_data.get('feature')
+                row_index = form.cleaned_data.get('row_index')
+
+                n_estimators_min = form.cleaned_data.get('n_estimators_min')
+                n_estimators_max = form.cleaned_data.get('n_estimators_max')
+                n_estimators_div = form.cleaned_data.get('n_estimators_div')
+                max_depth_min = form.cleaned_data.get('max_depth_min')
+                max_depth_max = form.cleaned_data.get('max_depth_max')
+                max_depth_div = form.cleaned_data.get('max_depth_div')
+                max_features_min = form.cleaned_data.get('max_features_min')
+                max_features_max = form.cleaned_data.get('max_features_max')
+                max_features_div = form.cleaned_data.get('max_features_div')
+
+                def get_params(min_value, max_value, div):
+                    result = []
+                    interval = (max_value - min_value) / (div - 1)
+                    
+                    for _ in range(div - 1):
+                        result.append(min_value)
+                        min_value += interval
+                    result.append(max_value)
+                    result = list(set(round(i) for i in result))
+                    result.sort()
+                    
+                    return result
+                
+                n_estimators = get_params(n_estimators_min, n_estimators_max, n_estimators_div)
+                max_depth = get_params(max_depth_min, max_depth_max, max_depth_div)
+                max_features = get_params(max_features_min, max_features_max, max_features_div)
+
+
+                li1 = target.split()
+                y = pd.DataFrame(li1[1:], columns=[li1[0]], dtype=float)
+                li2 = [i.split() for i in feature.split('\n')]
+                if li2[-1] == []:
+                    li2.remove([])
+                X = pd.DataFrame(li2[1:], columns=li2[0], dtype=float)
+
+                rf_grid=RandomForestRegressor()
+                params={'n_estimators': n_estimators,
+                        'max_depth'   : max_depth,
+                        "max_features": max_features,
+                        "random_state": [0]}           
+
+                y_array = np.array(y).ravel()
+
+                k_fold=KFold(n_splits=2, shuffle=True, random_state=0)
+                grid=GridSearchCV(estimator=rf_grid, param_grid=params, cv=k_fold, scoring="r2")
+                grid.fit(X, y_array)
+                params = grid.best_params_
+                r2 = grid.best_score_
+
+                explainer= shap.TreeExplainer(grid.best_estimator_)
+                shap_values = explainer.shap_values(X)
+                shap.summary_plot(shap_values=shap_values,
+                                features=X,
+                                plot_type='bar',
+                                show=False)
+                path_bar = THIS_FOLDER / 'static' / 'pls' / 'img' / 'bar.png'
+                plt.savefig(path_bar)
+                plt.close()
+
+                shap.initjs()
+                shap.plots._waterfall.waterfall_legacy(expected_value=explainer.expected_value[0],
+                                                    shap_values=shap_values[row_index, :],
+                                                    features=X.iloc[row_index, :],
+                                                    show=False)
+                
+                path_plot = THIS_FOLDER / 'static' / 'pls' / 'img' / 'plot.png'
+                plt.savefig(path_plot)
+                plt.close()
+
+                context = {
+                    'form': form,
+                    'params': params,
+                    'r2': r2,
+                    'savefig': True,
+                }
+                return render(request, 'pls/shap.html', context)
+    
+        except Exception as e:
+            context = {
+                'form': form,
+                'message': e
+            }
+            return render(request, 'pls/shap.html', context)
+
+    form = ShapForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'pls/shap.html', context)
