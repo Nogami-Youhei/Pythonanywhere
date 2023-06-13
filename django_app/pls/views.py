@@ -397,8 +397,8 @@ from sklearn.ensemble import RandomForestRegressor
 import shap
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
+import japanize_matplotlib
 
 @login_required
 def shap_view(request):
@@ -421,6 +421,8 @@ def shap_view(request):
                 max_features_div = form.cleaned_data.get('max_features_div')
 
                 def get_params(min_value, max_value, div):
+                    if div == 1:
+                        return [max_value]
                     result = []
                     interval = (max_value - min_value) / (div - 1)
                     
@@ -436,7 +438,6 @@ def shap_view(request):
                 n_estimators = get_params(n_estimators_min, n_estimators_max, n_estimators_div)
                 max_depth = get_params(max_depth_min, max_depth_max, max_depth_div)
                 max_features = get_params(max_features_min, max_features_max, max_features_div)
-
 
                 li1 = target.split()
                 y = pd.DataFrame(li1[1:], columns=[li1[0]], dtype=float)
@@ -462,18 +463,18 @@ def shap_view(request):
                 explainer= shap.TreeExplainer(grid.best_estimator_)
                 shap_values = explainer.shap_values(X)
                 shap.summary_plot(shap_values=shap_values,
-                                features=X,
-                                plot_type='bar',
-                                show=False)
+                                  features=X,
+                                  plot_type='bar',
+                                  show=False)
                 path_bar = THIS_FOLDER / 'static' / 'pls' / 'img' / 'bar.png'
                 plt.savefig(path_bar)
                 plt.close()
 
                 shap.initjs()
                 shap.plots._waterfall.waterfall_legacy(expected_value=explainer.expected_value[0],
-                                                    shap_values=shap_values[row_index, :],
-                                                    features=X.iloc[row_index, :],
-                                                    show=False)
+                                                       shap_values=shap_values[row_index, :],
+                                                       features=X.iloc[row_index, :],
+                                                       show=False)
                 
                 path_plot = THIS_FOLDER / 'static' / 'pls' / 'img' / 'plot.png'
                 plt.savefig(path_plot)

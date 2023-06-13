@@ -10,7 +10,7 @@
     </div>
     </div>
     <div class="pcr-contents wrapper">
-    <p class="outline">SHAP値計算</p>
+    <p class="outline">ランダムフォレストにおけるSHAP値計算</p>
     <p>※縦はデータ、横は説明変数となるように、エクセルからコピーして貼り付けてください</p>
     <form action="{% url 'shap' %}" method="post">
         {% csrf_token %}
@@ -19,19 +19,19 @@
         <tr><th>説明変数:</th><td>{{ form.feature }}</td></tr>
         <tr><th>サンプル行番号:</th><td>{{ form.row_index }}</td></tr>
         </table>
-        <table class="params">
-        <tr><th>パラメータ</th><th class="header">最小値</th><th class="header">最大値</th><th class="header">分割数</th></tr>
+        <table class="params result">
+        <tr><th>パラメータ</th><td class="header">最小値</td><td class="header">最大値</td><td class="header">分割数</td></td>
         <tr><th>平均する決定木:</th><td>{{ form.n_estimators_min }}</td><td>{{ form.n_estimators_max }}</td><td>{{ form.n_estimators_div }}</td></tr>
         <tr><th>深さ:</th><td>{{ form.max_depth_min }}</td><td>{{ form.max_depth_max }}</td><td>{{ form.max_depth_div }}</td></tr>
         <tr><th>特徴量の数:</th><td>{{ form.max_features_min }}</td><td>{{ form.max_features_max }}</td><td>{{ form.max_features_div }}</td></tr>
         </table>
         <div class="shap-button">
-        <input type="submit" value="計算" class="button">
-        <p>{{ message }}</p>
+        <input type="submit" value="計算" class="button" id="btn">
+        <p id="message">{{ message }}</p>
         </div>
     </form>
         {% if savefig %}
-        <table class="result">
+        <table class="result margin">
         <tr><th></th><td>最適パラメータ</td></tr>
         <tr><th>平均する決定木:</th><td>{{ params.n_estimators }}</td></tr>
         <tr><th>深さ:</th><td>{{ params.max_depth }}</td></tr>
@@ -42,4 +42,5 @@
         <p><img src="{% static '/pls/img/plot.png' %}" alt="plot"></p>
         {% endif %}
     </div>
+    <script src="{% static 'pls/js/shap.js' %}"></script>
 {% endblock %}

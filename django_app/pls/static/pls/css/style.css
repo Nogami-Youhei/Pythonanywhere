@@ -335,13 +335,16 @@ label {
     text-align: left;
   }
   
-  table.result {
+  table.margin {
     margin-top: 100px;
+  }
+
+  table.result {
+    margin-top: 30px;
     margin-bottom: 50px;
     position: relative;
     left: 100px
   }
-
   .result td {
     text-align: center;
     font-size: 1.2em;
@@ -358,10 +361,9 @@ label {
     border-style: solid;
     border-collapse: collapse;
     padding: 1em;
-    margin: 1em;
   }
   .result tr:not(:first-child):hover {
-    background-color: #eee;
+    background-color: #efefef;
   }
   .result tr:first-child {
     background-color: #ddd;
