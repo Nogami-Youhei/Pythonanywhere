@@ -406,8 +406,10 @@ def shap_view(request):
             clear = request.POST.get('clear')
             if clear:
                 path_bar = THIS_FOLDER / 'static' / 'pls' / 'img' / 'bar.png'
+                path_dot = THIS_FOLDER / 'static' / 'pls' / 'img' / 'dot.png'
                 path_plot = THIS_FOLDER / 'static' / 'pls' / 'img' / 'plot.png'
                 os.remove(path_bar)
+                os.remove(path_dot)
                 os.remove(path_plot)
                 form = ShapForm()
                 context = {
@@ -479,6 +481,14 @@ def shap_view(request):
                                   show=False)
                 path_bar = THIS_FOLDER / 'static' / 'pls' / 'img' / 'bar.png'
                 plt.savefig(path_bar)
+                plt.close()
+
+                shap.summary_plot(shap_values=shap_values,
+                                  features=X,
+                                  plot_type='dot',
+                                  show=False)
+                path_dot = THIS_FOLDER / 'static' / 'pls' / 'img' / 'dot.png'
+                plt.savefig(path_dot)
                 plt.close()
 
                 shap.initjs()

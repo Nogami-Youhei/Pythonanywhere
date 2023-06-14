@@ -325,6 +325,7 @@ label {
     position: relative;
     left: 200px;
     border: 0.5px solid black;
+    margin-bottom: 50px;
   }
   .shap-button p {
     position: relative;
@@ -332,6 +333,7 @@ label {
     padding: 20px;
     color: red;
     font-size: 1.2em;
+    display: inline-block;
   }
   .target input{
     width: 100%;
