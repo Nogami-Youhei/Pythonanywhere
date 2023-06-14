@@ -10,14 +10,26 @@
     </div>
     </div>
     <div class="pcr-contents wrapper">
-    <p class="outline">ランダムフォレストにおけるSHAP値計算</p>
-    <p>※縦はデータ、横は説明変数となるように、エクセルからコピーして貼り付けてください</p>
+    <div class="wrapper3">
+    <div>
+    <p class="outline">ランダムフォレスト・線形回帰におけるSHAP値計算</p>
+    <p>※縦はデータ、横は説明変数となるように、データ名も含めてエクセルからコピーし、貼り付けてください</p>
+    <p>サンプル行番号で選択した1データについて、それぞれの説明変数の寄与率が最下段のグラフに表示されます</p>
+    </div>
+    <table class="table">
+    <tr><th>平均する決定木:</th><td>n_estimators</td></tr>
+    <tr><th>深さ:</th><td>max_depth</td></tr>
+    <tr><th>特徴量の数:</th><td>max_features</td></tr>
+    </table>
+    </div>
     <form action="{% url 'shap' %}" method="post">
         {% csrf_token %}
         <table class="params">
         <tr><th>目的変数:</th><td class="target">{{ form.target }}</td></tr>
         <tr><th>説明変数:</th><td>{{ form.feature }}</td></tr>
         <tr><th>サンプル行番号:</th><td>{{ form.row_index }}</td></tr>
+        <tr><th>KFold分割数:</th><td>{{ form.n_splits }}</td></tr>
+        <tr><th>モデル:</th><td><div class="select-wrapper">{{ form.choices }}</div></td></tr>
         </table>
         <table class="params result">
         <tr><th>パラメータ</th><td class="header">最小値</td><td class="header">最大値</td><td class="header">分割数</td></td>

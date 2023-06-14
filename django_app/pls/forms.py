@@ -35,7 +35,9 @@ class UserForm(forms.Form):
 class ShapForm(forms.Form):
     target = forms.CharField(label='目的変数')
     feature = forms.CharField(label='説明変数', widget=forms.Textarea(attrs={'rows':5}))
-    row_index = forms.IntegerField(label='サンプル行番号', min_value=0, initial=1)
+    row_index = forms.IntegerField(label='サンプル行番号', min_value=0, initial=0)
+    n_splits = forms.IntegerField(label='KFold分割数', min_value=0, initial=5)
+
     n_estimators_min = forms.IntegerField(label='平均する決定木の最小値', min_value=1, initial=1)
     n_estimators_max = forms.IntegerField(label='平均する決定木の最大値', min_value=1, initial=10)
     n_estimators_div = forms.IntegerField(label='平均する決定木の分割数', min_value=1, initial=3)
@@ -45,3 +47,12 @@ class ShapForm(forms.Form):
     max_features_min = forms.IntegerField(label='特徴量の最小値', min_value=1, initial=1)
     max_features_max = forms.IntegerField(label='特徴量の最大値', min_value=1, initial=10)
     max_features_div = forms.IntegerField(label='特徴量の分割数', min_value=1, initial=3)
+
+    choices = forms.fields.ChoiceField(
+        label='モデル',
+        choices = (
+            ("0", "ランダムフォレスト"),
+            ("1", "線形回帰"),
+        ),
+        widget=forms.widgets.Select(attrs={'class': 'select'})
+    )

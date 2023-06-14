@@ -380,6 +380,31 @@ label {
     font-size: 1.8em;
     border: 0.5px solid black;
   }
+  .table {
+    border-spacing: 1em;
+    font-size: 0.9em;
+  }
+  .table th {
+    text-align: right;
+    margin: 0px;
+  }
+  .table td {
+    margin: 0px;
+  }
+  .wrapper3 {
+    display: flex;
+    align-items: flex-start;
+    box-sizing: border-box;
+  }
+  .wrapper3 div {
+    width: 50vw;
+  }
+  .wrapper3 table {
+    padding-left: 5%;
+    line-height: 1.2em;
+    position: relative;
+    bottom: 20px;
+  }
 
 @media (max-width: 600px) {
     .page-header {

@@ -397,6 +397,7 @@ import shap
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold
+from sklearn.metrics import r2_score
 import japanize_matplotlib
 
 @login_required
@@ -422,6 +423,8 @@ def shap_view(request):
                 target = form.cleaned_data.get('target')
                 feature = form.cleaned_data.get('feature')
                 row_index = form.cleaned_data.get('row_index')
+                n_splits = form.cleaned_data.get('n_splits')
+                n_components = form.cleaned_data.get('n_components')
 
                 n_estimators_min = form.cleaned_data.get('n_estimators_min')
                 n_estimators_max = form.cleaned_data.get('n_estimators_max')
@@ -432,6 +435,8 @@ def shap_view(request):
                 max_features_min = form.cleaned_data.get('max_features_min')
                 max_features_max = form.cleaned_data.get('max_features_max')
                 max_features_div = form.cleaned_data.get('max_features_div')
+
+                choices = form.cleaned_data.get('choices')
 
                 def get_params(min_value, max_value, div):
                     if div == 1:
@@ -459,44 +464,43 @@ def shap_view(request):
                     li2.remove([])
                 X = pd.DataFrame(li2[1:], columns=li2[0], dtype=float)
 
-                rf_grid=RandomForestRegressor()
-                params={'n_estimators': n_estimators,
-                        'max_depth'   : max_depth,
-                        "max_features": max_features,
-                        "random_state": [0]}           
+                if int(choices):
+                    model = LinearRegression()
+                    model.fit(X, y)
+                    y_pred = model.predict(X)
+                    r2 = r2_score(y, y_pred)
+                    params={}
+             
+                else:
+                    rf_grid=RandomForestRegressor()
+                    params={'n_estimators': n_estimators,
+                            'max_depth'   : max_depth,
+                            "max_features": max_features,
+                            "random_state": [0]}           
 
-                y_array = np.array(y).ravel()
+                    y_array = np.array(y).ravel()
 
-                k_fold=KFold(n_splits=2, shuffle=True, random_state=0)
-                grid=GridSearchCV(estimator=rf_grid, param_grid=params, cv=k_fold, scoring="r2")
-                grid.fit(X, y_array)
-                params = grid.best_params_
-                r2 = grid.best_score_
+                    k_fold=KFold(n_splits=n_splits, shuffle=True, random_state=0)
+                    grid=GridSearchCV(estimator=rf_grid, param_grid=params, cv=k_fold, scoring="r2")
+                    grid.fit(X, y_array)
+                    model = grid.best_estimator_
+                    params = grid.best_params_
+                    r2 = grid.best_score_
 
-                explainer= shap.TreeExplainer(grid.best_estimator_)
-                shap_values = explainer.shap_values(X)
-                shap.summary_plot(shap_values=shap_values,
-                                  features=X,
-                                  plot_type='bar',
-                                  show=False)
+
+                explainer = shap.Explainer(model, X)
+                shap_values = explainer(X)
+                shap.summary_plot(shap_values, X, plot_type='bar', show=False)
                 path_bar = THIS_FOLDER / 'static' / 'pls' / 'img' / 'bar.png'
                 plt.savefig(path_bar)
-                plt.close()
+                plt.close()               
 
-                shap.summary_plot(shap_values=shap_values,
-                                  features=X,
-                                  plot_type='dot',
-                                  show=False)
+                shap.summary_plot(shap_values, X, plot_type='dot', show=False)
                 path_dot = THIS_FOLDER / 'static' / 'pls' / 'img' / 'dot.png'
                 plt.savefig(path_dot)
                 plt.close()
 
-                shap.initjs()
-                shap.plots._waterfall.waterfall_legacy(expected_value=explainer.expected_value[0],
-                                                       shap_values=shap_values[row_index, :],
-                                                       features=X.iloc[row_index, :],
-                                                       show=False)
-                
+                shap.waterfall_plot(shap.Explanation(values=shap_values[0], data=X.iloc[0], feature_names=X.columns), show=False)
                 path_plot = THIS_FOLDER / 'static' / 'pls' / 'img' / 'plot.png'
                 plt.savefig(path_plot)
                 plt.close()
@@ -509,12 +513,14 @@ def shap_view(request):
                 }
                 return render(request, 'pls/shap.html', context)
         except ValueError as e:
+            raise e
             context = {
                 'form': form,
                 'message': '入力値が不正です。目的変数と説明変数の数は同じですか？'
             }
             return render(request, 'pls/shap.html', context)
         except Exception as e:
+            raise e
             context = {
                 'form': form,
                 'message': e
