@@ -208,6 +208,9 @@ input[type="submit"] {
 .start {
     color: #0bd;
 }
+.shap-button p.start {
+    color: #0bd;
+}
 label {
     text-align: right;
 }
@@ -368,7 +371,13 @@ label {
   .result tr:first-child {
     background-color: #ddd;
   }
-
+  #clear input {
+    position: relative;
+    left: 200px;
+    margin: 70px;
+    font-size: 1.8em;
+    border: 0.5px solid black;
+  }
 
 @media (max-width: 600px) {
     .page-header {

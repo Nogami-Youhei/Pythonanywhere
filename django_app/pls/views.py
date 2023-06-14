@@ -21,7 +21,6 @@ import openpyxl
 import openpyxl as xl
 from openpyxl.styles import Font
 from pathlib import Path
-import unicodedata
 from django.core.files.storage import FileSystemStorage
 from .forms import SignupForm, LoginForm
 from django.contrib.auth import login, logout
@@ -404,6 +403,18 @@ import japanize_matplotlib
 def shap_view(request):
     if request.method == 'POST':
         try:
+            clear = request.POST.get('clear')
+            if clear:
+                path_bar = THIS_FOLDER / 'static' / 'pls' / 'img' / 'bar.png'
+                path_plot = THIS_FOLDER / 'static' / 'pls' / 'img' / 'plot.png'
+                os.remove(path_bar)
+                os.remove(path_plot)
+                form = ShapForm()
+                context = {
+                    'form': form
+                }
+                return render(request, 'pls/shap.html', context)
+            
             form = ShapForm(request.POST)
             if form.is_valid():
                 target = form.cleaned_data.get('target')
@@ -487,7 +498,12 @@ def shap_view(request):
                     'savefig': True,
                 }
                 return render(request, 'pls/shap.html', context)
-    
+        except ValueError as e:
+            context = {
+                'form': form,
+                'message': '入力値が不正です。目的変数と説明変数の数は同じですか？'
+            }
+            return render(request, 'pls/shap.html', context)
         except Exception as e:
             context = {
                 'form': form,

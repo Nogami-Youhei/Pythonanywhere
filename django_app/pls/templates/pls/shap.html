@@ -40,6 +40,10 @@
         </table>
         <p><img src="{% static '/pls/img/bar.png' %}" alt="bar"></p>
         <p><img src="{% static '/pls/img/plot.png' %}" alt="plot"></p>
+        <form action="{% url 'shap' %}" method="post">
+        {% csrf_token %}
+        <p id="clear"><input type="submit" value="clear"  name="clear" class="button"></p>
+        </form>
         {% endif %}
     </div>
     <script src="{% static 'pls/js/shap.js' %}"></script>
