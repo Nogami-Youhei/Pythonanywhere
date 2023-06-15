@@ -70,7 +70,6 @@ def pls(request):
             params = {
                 'range1': range(1, 11),
                 'coef_': 'coef_:<br>' + str(PLS_model.coef_),
-                'intercept_': 'intercept_:<br>' + str(PLS_model.intercept_),
                 'predict': 'predict:<br>' + str(predict),
                 'R2': 'R2: ' + str(R2),
             }
