@@ -424,7 +424,6 @@ def shap_view(request):
                 feature = form.cleaned_data.get('feature')
                 row_index = form.cleaned_data.get('row_index')
                 n_splits = form.cleaned_data.get('n_splits')
-                n_components = form.cleaned_data.get('n_components')
 
                 n_estimators_min = form.cleaned_data.get('n_estimators_min')
                 n_estimators_max = form.cleaned_data.get('n_estimators_max')
@@ -472,6 +471,7 @@ def shap_view(request):
                     y_pred = model.predict(X_array)
                     r2 = r2_score(y, y_pred)
                     coef = model.coef_.ravel()
+                    X = pd.DataFrame(X_array, columns=li2[0])
                     params={}
              
                 else:
