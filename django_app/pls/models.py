@@ -13,5 +13,3 @@ class Paper(models.Model):
     number = models.IntegerField()
     ja = models.IntegerField()
     choices = models.CharField(max_length=100)
-
-    

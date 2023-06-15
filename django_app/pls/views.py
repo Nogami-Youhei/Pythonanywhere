@@ -472,7 +472,7 @@ def shap_view(request):
                     r2 = r2_score(y, y_pred)
                     coef = model.coef_.ravel()
                     X = pd.DataFrame(X_array, columns=li2[0])
-                    params={}
+                    params = {}
              
                 else:
                     rf_grid=RandomForestRegressor()
@@ -519,14 +519,18 @@ def shap_view(request):
                 }
                 return render(request, 'pls/shap.html', context)
         except ValueError as e:
-            raise e
             context = {
                 'form': form,
-                'message': '入力値が不正です。目的変数と説明変数の数は同じですか？'
+                'message': '入力値が不正です。入力データ数、特徴量の数は適切ですか？'
             }
             return render(request, 'pls/shap.html', context)
+        except IndexError as e:
+            context = {
+                'form': form,
+                'message': 'サンプル行番号の指定は適切ですか？'
+            }
+            return render(request, 'pls/shap.html', context)        
         except Exception as e:
-            raise e
             context = {
                 'form': form,
                 'message': e

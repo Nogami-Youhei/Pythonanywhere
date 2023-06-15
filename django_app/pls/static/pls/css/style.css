@@ -170,7 +170,6 @@ textarea {
     border: 0.5px solid #999;
 }
 input[type="submit"] {
-    border: none;
     cursor: pointer;
     line-height: 1;
 }
