@@ -466,9 +466,12 @@ def shap_view(request):
 
                 if int(choices):
                     model = LinearRegression()
-                    model.fit(X, y)
-                    y_pred = model.predict(X)
+                    scaler = StandardScaler()
+                    X_array = scaler.fit_transform(X)
+                    model.fit(X_array, y)
+                    y_pred = model.predict(X_array)
                     r2 = r2_score(y, y_pred)
+                    coef = model.coef_.ravel()
                     params={}
              
                 else:
@@ -484,9 +487,11 @@ def shap_view(request):
                     grid=GridSearchCV(estimator=rf_grid, param_grid=params, cv=k_fold, scoring="r2")
                     grid.fit(X, y_array)
                     model = grid.best_estimator_
+                    coef = model.feature_importances_
                     params = grid.best_params_
                     r2 = grid.best_score_
-
+                
+                coef_list = [[a, b] for a, b in zip(li2[0], coef)]  
 
                 explainer = shap.Explainer(model, X)
                 shap_values = explainer(X)
@@ -500,14 +505,15 @@ def shap_view(request):
                 plt.savefig(path_dot)
                 plt.close()
 
-                shap.waterfall_plot(shap.Explanation(values=shap_values[0], data=X.iloc[0], feature_names=X.columns), show=False)
+                shap.waterfall_plot(shap.Explanation(values=shap_values[row_index], data=X.iloc[row_index], feature_names=X.columns), show=False)
                 path_plot = THIS_FOLDER / 'static' / 'pls' / 'img' / 'plot.png'
                 plt.savefig(path_plot)
                 plt.close()
-
+                
                 context = {
                     'form': form,
                     'params': params,
+                    'coef_list': coef_list,
                     'r2': r2,
                     'savefig': True,
                 }

@@ -394,16 +394,14 @@ label {
   .wrapper3 {
     display: flex;
     align-items: flex-start;
-    box-sizing: border-box;
-  }
-  .wrapper3 div {
-    width: 50vw;
   }
   .wrapper3 table {
-    padding-left: 5%;
-    line-height: 1.2em;
+    margin-right: 50px;
+  }
+  .wrapper3 .table {
     position: relative;
-    bottom: 20px;
+    left: 55px;
+    top: 20px;
   }
 
 @media (max-width: 600px) {

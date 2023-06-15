@@ -10,17 +10,10 @@
     </div>
     </div>
     <div class="pcr-contents wrapper">
-    <div class="wrapper3">
     <div>
     <p class="outline">ランダムフォレスト・線形回帰におけるSHAP値計算</p>
     <p>※縦はデータ、横は説明変数となるように、データ名も含めてエクセルからコピーし、貼り付けてください</p>
     <p>サンプル行番号で選択した1データについて、それぞれの説明変数の寄与率が最下段のグラフに表示されます</p>
-    </div>
-    <table class="table">
-    <tr><th>平均する決定木:</th><td>n_estimators</td></tr>
-    <tr><th>深さ:</th><td>max_depth</td></tr>
-    <tr><th>特徴量の数:</th><td>max_features</td></tr>
-    </table>
     </div>
     <form action="{% url 'shap' %}" method="post">
         {% csrf_token %}
@@ -31,18 +24,26 @@
         <tr><th>KFold分割数:</th><td>{{ form.n_splits }}</td></tr>
         <tr><th>モデル:</th><td><div class="select-wrapper">{{ form.choices }}</div></td></tr>
         </table>
+        <div class="wrapper3">
         <table class="params result">
         <tr><th>パラメータ</th><td class="header">最小値</td><td class="header">最大値</td><td class="header">分割数</td></td>
         <tr><th>平均する決定木:</th><td>{{ form.n_estimators_min }}</td><td>{{ form.n_estimators_max }}</td><td>{{ form.n_estimators_div }}</td></tr>
         <tr><th>深さ:</th><td>{{ form.max_depth_min }}</td><td>{{ form.max_depth_max }}</td><td>{{ form.max_depth_div }}</td></tr>
         <tr><th>特徴量の数:</th><td>{{ form.max_features_min }}</td><td>{{ form.max_features_max }}</td><td>{{ form.max_features_div }}</td></tr>
         </table>
+        <table class="table">
+        <tr><th>平均する決定木:</th><td>n_estimators</td></tr>
+        <tr><th>深さ:</th><td>max_depth</td></tr>
+        <tr><th>特徴量の数:</th><td>max_features</td></tr>
+        </table>
+        </div>
         <div class="shap-button">
         <input type="submit" value="計算" class="button" id="btn">
         <p id="message">{{ message }}</p>
         </div>
     </form>
         {% if savefig %}
+        <div class="wrapper3">
         <table class="result margin">
         <tr><th></th><td>最適パラメータ</td></tr>
         <tr><th>平均する決定木:</th><td>{{ params.n_estimators }}</td></tr>
@@ -50,6 +51,13 @@
         <tr><th>特徴量の数:</th><td>{{ params.max_features }}</td></tr>
         <tr><th>R2乗値:</th><td>{{ r2|floatformat:2 }}</td></tr>
         </table>
+        <table class="result margin">
+        <tr><th></th><td>係数/重要度</td></tr>
+        {% for feature, coef in coef_list %}
+        <tr><th>{{ feature }}</th><td>{{ coef|floatformat:2 }}</td></tr>
+        {% endfor %}
+        </table>
+        </div>
         <p><img src="{% static '/pls/img/bar.png' %}" alt="bar"></p>
         <p><img src="{% static '/pls/img/dot.png' %}" alt="dot"></p>
         <p><img src="{% static '/pls/img/plot.png' %}" alt="plot"></p>
