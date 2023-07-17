@@ -173,6 +173,10 @@ input[type="submit"] {
     cursor: pointer;
     line-height: 1;
 }
+
+input#btn {
+    margin: 50px;
+}
 .button2 {
     display: block;
     font-size: 1rem;
@@ -310,7 +314,7 @@ label {
     border-radius: 5px;
     padding: 10px;
     font-size: 1rem;
-    width: 9vw;
+    width: 100px;
     text-align: center;
   }
   .params th {
@@ -321,14 +325,10 @@ label {
     text-align: center;
   }
   .shap-button input {
-    position: relative;
-    left: 200px;
     border: 0.5px solid black;
     margin-bottom: 50px;
   }
   .shap-button p {
-    position: relative;
-    left: 200px;
     padding: 20px;
     color: red;
     font-size: 1.2em;
@@ -338,17 +338,7 @@ label {
     width: 100%;
     text-align: left;
   }
-  
-  table.margin {
-    margin-top: 100px;
-  }
 
-  table.result {
-    margin-top: 30px;
-    margin-bottom: 50px;
-    position: relative;
-    left: 100px
-  }
   .result td {
     text-align: center;
     font-size: 1.2em;
@@ -373,8 +363,6 @@ label {
     background-color: #ddd;
   }
   #clear input {
-    position: relative;
-    left: 200px;
     margin: 70px;
     font-size: 1.8em;
     border: 0.5px solid black;
@@ -395,13 +383,31 @@ label {
     align-items: flex-start;
   }
   .wrapper3 table {
-    margin-right: 50px;
+    margin: 20px;
   }
   .wrapper3 .table {
     position: relative;
     left: 55px;
     top: 20px;
   }
+  #fig {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  #fig img {
+    max-width: 1500px;
+    width: 700px;
+    margin: 20px;
+  }
+
+p#dot {
+    margin-top: 50px;
+}
+
+p#clear {
+    text-align: center;
+}
 
 @media (max-width: 600px) {
     .page-header {

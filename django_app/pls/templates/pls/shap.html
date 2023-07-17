@@ -42,30 +42,8 @@
         <p id="message">{{ message }}</p>
         </div>
     </form>
-        {% if savefig %}
-        <div class="wrapper3">
-        <table class="result margin">
-        <tr><th></th><td>最適パラメータ</td></tr>
-        <tr><th>平均する決定木:</th><td>{{ params.n_estimators }}</td></tr>
-        <tr><th>深さ:</th><td>{{ params.max_depth }}</td></tr>
-        <tr><th>特徴量の数:</th><td>{{ params.max_features }}</td></tr>
-        <tr><th>R2乗値:</th><td>{{ r2|floatformat:2 }}</td></tr>
-        </table>
-        <table class="result margin">
-        <tr><th></th><td>係数/重要度</td></tr>
-        {% for feature, coef in coef_list %}
-        <tr><th>{{ feature }}</th><td>{{ coef|floatformat:2 }}</td></tr>
-        {% endfor %}
-        </table>
-        </div>
-        <p><img src="{% static '/pls/img/bar.png' %}" alt="bar"></p>
-        <p><img src="{% static '/pls/img/dot.png' %}" alt="dot"></p>
-        <p><img src="{% static '/pls/img/plot.png' %}" alt="plot"></p>
-        <form action="{% url 'shap' %}" method="post">
-        {% csrf_token %}
-        <p id="clear"><input type="submit" value="clear"  name="clear" class="button"></p>
-        </form>
-        {% endif %}
     </div>
+    <div id="shap_result"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script src="{% static 'pls/js/shap.js' %}"></script>
 {% endblock %}

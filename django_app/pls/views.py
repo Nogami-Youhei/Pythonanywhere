@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import FileResponse
+from django.http import HttpResponse, JsonResponse, FileResponse
 import numpy as np
 import pandas as pd
 from sklearn.pipeline import make_pipeline
@@ -398,6 +398,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold
 from sklearn.metrics import r2_score
 import japanize_matplotlib
+from django.utils import timezone 
 
 @login_required
 def shap_view(request):
@@ -508,33 +509,25 @@ def shap_view(request):
                 path_plot = THIS_FOLDER / 'static' / 'pls' / 'img' / 'plot.png'
                 plt.savefig(path_plot)
                 plt.close()
-                
                 context = {
                     'form': form,
                     'params': params,
                     'coef_list': coef_list,
                     'r2': r2,
-                    'savefig': True,
+                    'timestamp': timezone.now().timestamp(),
                 }
-                return render(request, 'pls/shap.html', context)
+                return render(request, 'pls/shap_result.html', context)
+            
         except ValueError as e:
-            context = {
-                'form': form,
-                'message': '入力値が不正です。入力データ数、特徴量の数は適切ですか？'
-            }
-            return render(request, 'pls/shap.html', context)
+            return HttpResponse(0)
         except IndexError as e:
-            context = {
-                'form': form,
-                'message': 'サンプル行番号の指定は適切ですか？'
-            }
-            return render(request, 'pls/shap.html', context)        
+            return HttpResponse(1)
         except Exception as e:
-            context = {
-                'form': form,
-                'message': e
+            params = {
+                'number': 2,
+                'message': str(e)
             }
-            return render(request, 'pls/shap.html', context)
+            return JsonResponse(params)
 
     form = ShapForm()
     context = {
