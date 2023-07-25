@@ -129,3 +129,5 @@ MEDIA_ROOT = BASE_DIR / "media_local"
 LOGIN_URL = '/pls/login/'
 
 SESSION_COOKIE_AGE = 12096000
+
+# AUTH_USER_MODEL = 'pls.CustomUser'

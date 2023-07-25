@@ -212,18 +212,20 @@ def scraping(request):
                 return False
             else:
                 return True
-
         
-        if (request.method == 'POST'):
+        if request.method == 'POST':
             if form.is_valid():
-                paper = Paper(
-                user=user,
-                keywords=form.cleaned_data['keywords'],
-                number=form.cleaned_data['number'],
-                ja=form.cleaned_data['check'],
-                choices=form.cleaned_data['choices']
-                )
+                paper = form.save()
+                paper.user = user
                 paper.save()
+                # paper = Paper(
+                # user=user,
+                # keywords=form.cleaned_data['keywords'],
+                # number=form.cleaned_data['number'],
+                # ja=form.cleaned_data['check'],
+                # choices=form.cleaned_data['choices']
+                # )
+                # paper.save()
 
                 options = webdriver.ChromeOptions()
                 user_agent = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.2 Safari/605.1.15',
@@ -237,11 +239,11 @@ def scraping(request):
                 options.add_argument("--disable-gpu")
 
                 with webdriver.Chrome(options=options) as driver:
-                    check = form.cleaned_data['check']
+                    ja = paper.ja
                     i = 0
                     result = []
-                    keyword = '+'.join(form.cleaned_data['keywords'].split())
-                    num = form.cleaned_data['number']
+                    keyword = '+'.join(paper.keywords.split())
+                    num = paper.number
 
                     url = 'https://www.jstage.jst.go.jp/result/global/-char/ja?globalSearchKey=' + keyword
                     driver.get(url)
@@ -249,7 +251,7 @@ def scraping(request):
                     soup = BeautifulSoup(html, 'html.parser')
                     html = driver.page_source.encode('utf-8')
                     soup = BeautifulSoup(html, 'html.parser')
-                    sortby = form.cleaned_data['choices']
+                    sortby = paper.choices
                     Select(driver.find_element(By.NAME, 'sortby')).select_by_value(str(sortby))
                     while True:
                         url = driver.current_url
@@ -266,7 +268,7 @@ def scraping(request):
                             line = pd.Series(index=['タイトル', 'URL', '学会誌', '出版年', '巻・ページ', '発行日', '公開日', '要約'], dtype=object)
                             line.name = f'{i+1:03d}'
                             anchor = elem.find('a').text
-                            if check and discriminate_jp_en(anchor):
+                            if ja and discriminate_jp_en(anchor):
                                 anchor = translate(anchor.strip(), 'ja')
                             line[0] = anchor
                             link = elem.find('a')['href']
@@ -288,13 +290,13 @@ def scraping(request):
                                     line[-1] = ('要約なし')
                                 else:
                                     sibling = abstract.next_sibling
-                                    if check and discriminate_jp_en(sibling.text):
+                                    if ja and discriminate_jp_en(sibling.text):
                                         sibling = translate(sibling.text.strip(), 'ja')
                                         line[-1] = sibling.strip()
                                     else:
                                         line[-1] = sibling.text.strip()
                             else:
-                                if check and discriminate_jp_en(abstract.text):
+                                if ja and discriminate_jp_en(abstract.text):
                                     abstract = translate(abstract.text.strip(), 'ja')
                                     line[-1] = abstract.strip()
                                 else:
@@ -359,6 +361,7 @@ def scraping(request):
 
     
     except Exception as e:
+        raise e
         params = {
             'message': e,
             }

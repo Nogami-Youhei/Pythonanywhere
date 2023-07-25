@@ -1,6 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import Paper
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class SignupForm(UserCreationForm):
     class Meta:
@@ -12,25 +16,50 @@ class LoginForm(AuthenticationForm):
     pass
     
 
-class UserForm(forms.Form):
-    keywords = forms.CharField(label='キーワード', max_length=100)
-    number = forms.IntegerField(label='論文数', min_value=1, max_value=500, widget=forms.NumberInput(attrs={'class': 'my-class'}))
-    check = forms.BooleanField(
-        label='日本語訳',
-        required=False
-    )
-    choices = forms.fields.ChoiceField(
-        label='取得順',
-        choices = (
-            ("1", "ヒット率"),
-            ("5", "発行日[新しい順]"),
-            ("6", "発行日[古い順]"),
-            ("2", "公開日[新しい順]"),
-            ("3", "公開日[古い順]"),
-            ("4", "資料名順"),
-        ),
-        widget=forms.widgets.Select(attrs={'class': 'select'})
-    )
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = Paper
+        fields = ['keywords', 'number', 'ja', 'choices']
+        labels = {
+            'keywords': 'キーワード',
+            'number': '論文数',
+            'ja': '日本語訳',
+            'choices': '取得順',
+        }
+        widgets = {
+            'number': forms.NumberInput(),
+            'ja': forms.CheckboxInput(),
+            'choices': forms.widgets.Select(attrs={'class': 'select'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['number'].widget.attrs.update({
+            'min': 1,
+            'max': 500,
+        })
+
+
+# class UserForm(forms.Form):
+#     keywords = forms.CharField(label='キーワード', max_length=100)
+#     number = forms.IntegerField(label='論文数', min_value=1, max_value=500, widget=forms.NumberInput(attrs={'class': 'my-class'}))
+#     check = forms.BooleanField(
+#         label='日本語訳',
+#         required=False
+#     )
+#     choices = forms.fields.ChoiceField(
+#         label='取得順',
+#         choices = (
+#             ("1", "ヒット率"),
+#             ("5", "発行日[新しい順]"),
+#             ("6", "発行日[古い順]"),
+#             ("2", "公開日[新しい順]"),
+#             ("3", "公開日[古い順]"),
+#             ("4", "資料名順"),
+#         ),
+#         widget=forms.widgets.Select(attrs={'class': 'select'})
+#     )
+
 
 class ShapForm(forms.Form):
     target = forms.CharField(label='目的変数')

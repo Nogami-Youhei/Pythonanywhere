@@ -19,53 +19,34 @@
     <br>
     <form action="{% url 'scraping' %}" method="post">
     {% csrf_token %}
+    {{ form.non_field_errors }}
     <table>
-    <tr>
-    <th>
-    {{ form.keywords.label_tag }}
-    </th>
-    <td>
+    <tr><th>{{ form.keywords.label_tag }}</th><td>
+    {{ form.keywords.errors }}
     {{ form.keywords }}
-    </td>
-    </tr>
-    <tr>
-    <th>
-    {{ form.number.label_tag }}
-    </th>
-    <td>
+    </td></tr>
+    <tr><th>{{ form.number.label_tag }}</th><td>
+    {{ form.number.errors }}
     {{ form.number }}
-    </td>
-    </tr>
-    <tr>
-    <th>
-    {{ form.check.label_tag }}
-    </th>
-    <td>
-    {{ form.check }}
-    </td>
-    </tr>
-    <tr>
-    <th>
-    {{ form.choices.label_tag }}
-    </th>
-    <td>
-    <div class="select-wrapper">
+    </td></tr>
+    <tr><th>{{ form.ja.label_tag }}</th><td>
+    {{ form.ja.errors }}
+    {{ form.ja }}
+    </td></tr>
+    <tr><th>{{ form.choices.label_tag }}</th><td>
+    {{ form.choices.errors }}
+    <div class="select-wrapper">    
     {{ form.choices }}
     </div>
-    </td>
-    </tr>
-    <tr>
-    <th>
-    </th>
+    </td></tr>
+    <tr><th></th>
     <td>
     <div class="message-wrapper">
     <p><input id="btn" type="submit" class="button" value="Download"></p>
     <p id="message2" class="message">{{ message|safe }}</p>
     </div>
     </td>
-    <td>
-    </td>
-    </tr>
+    <td></td></tr>
     </table>
     </form>
     </div>
