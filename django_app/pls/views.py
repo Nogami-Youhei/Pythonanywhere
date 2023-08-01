@@ -218,14 +218,6 @@ def scraping(request):
                 paper = form.save()
                 paper.user = user
                 paper.save()
-                # paper = Paper(
-                # user=user,
-                # keywords=form.cleaned_data['keywords'],
-                # number=form.cleaned_data['number'],
-                # ja=form.cleaned_data['check'],
-                # choices=form.cleaned_data['choices']
-                # )
-                # paper.save()
 
                 options = webdriver.ChromeOptions()
                 user_agent = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.2 Safari/605.1.15',
@@ -412,11 +404,7 @@ def shap_view(request):
                 os.remove(path_bar)
                 os.remove(path_dot)
                 os.remove(path_plot)
-                form = ShapForm()
-                context = {
-                    'form': form
-                }
-                return render(request, 'pls/shap.html', context)
+                return HttpResponse(3)
             
             form = ShapForm(request.POST)
             if form.is_valid():
@@ -451,7 +439,7 @@ def shap_view(request):
                     result.sort()
                     
                     return result
-
+                
                 n_estimators = get_params(n_estimators_min, n_estimators_max, n_estimators_div)
                 max_depth = get_params(max_depth_min, max_depth_max, max_depth_div)
                 max_features = get_params(max_features_min, max_features_max, max_features_div)
@@ -490,7 +478,7 @@ def shap_view(request):
                     coef = model.feature_importances_
                     params = grid.best_params_
                     r2 = grid.best_score_
-                
+
                 coef_list = [[a, b] for a, b in zip(li2[0], coef)]  
 
                 explainer = shap.Explainer(model, X)
@@ -520,8 +508,10 @@ def shap_view(request):
             
         except ValueError as e:
             return HttpResponse(0)
+
         except IndexError as e:
             return HttpResponse(1)
+
         except Exception as e:
             return HttpResponse(str(e))
 

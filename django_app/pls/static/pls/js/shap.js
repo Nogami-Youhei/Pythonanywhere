@@ -1,41 +1,53 @@
+async function submitNew() {
+	document.getElementById('message').classList.add('start')
+	document.getElementById('message').innerHTML = '計算を開始しますしばらくお待ちください...'
+	const form = document.getElementById('shap')
+	
+	const endPoint = document.getElementById('shap').action
+    let apiRes = await fetch(endPoint, {
+        method: 'POST',
+        body: new FormData(form)
+    });
+	const res = await apiRes.text();
+
+	if (res.trim()[0] === '<') {
+		document.getElementById('shap_result').innerHTML = res;
+		document.getElementById('message').innerHTML = ''
+		
+		let clear_btn = document.getElementById('clear_btn');
+		clear_btn.addEventListener('click', submitClear)
+	
+	} else if (res === '0') {
+		const message = document.getElementById('message')
+		message.classList.remove('start');
+		message.textContent = '入力値が不正です。入力データ数、特徴量の数は適切ですか？';
+	} else if (res === '1') {
+		const message = document.getElementById('message')
+		message.classList.remove('start');
+		message.textContent = 'サンプル行番号の指定は適切ですか？';
+	} else {
+		const message = document.getElementById('message')
+		message.classList.remove('start');
+		message.textContent = res;
+	}
+}
+
+async function submitClear() {
+	const form = document.getElementById('clear_shap')
+	
+	const endPoint = document.getElementById('clear_shap').action
+    let apiRes = await fetch(endPoint, {
+        method: 'POST',
+        body: new FormData(form)
+	});
+
+	const res = await apiRes.text();
+	if (res == '3') {
+		document.getElementById('shap_result').innerHTML = '';
+	}
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	let btn = document.getElementById('btn');
-	btn.addEventListener('click', function() {
-		document.getElementById('message').classList.add('start')
-		document.getElementById('message').innerHTML = '計算を開始しますしばらくお待ちください...'
-	}, false);
+	btn.addEventListener('click', submitNew)
 }, false);
-
-$('form').submit(function(event){
-	event.preventDefault();
-	var form = $(this);
-	$.ajax({
-		url: form.prop('action'),
-		method: form.prop('method'),
-		data: form.serialize(),
-	})
-	.done(function(data){
-		if (data.trim()[0] === '<') {
-			console.log('result')
-			$('#shap_result').html(data);
-			$('#message').empty();
-		} else if (data === '0') {
-			console.log('error1')
-			$('#message').removeClass('start');
-			$('#message').text('入力値が不正です。入力データ数、特徴量の数は適切ですか？');
-		} else if (data === '1') {
-			console.log('error2')
-			$('#message').removeClass('start');
-			$('#message').text('サンプル行番号の指定は適切ですか？');
-		} else {
-			$('#message').removeClass('start');
-			$('#message').text(data);
-		}
-	})
-	.fail((jqXHR, textStatus, errorThrown) => {
-		alert('Ajax通信に失敗しました。');
-		console.log("jqXHR          : " + jqXHR.status); // HTTPステータスを表示
-		console.log("textStatus     : " + textStatus);    // タイムアウト、パースエラーなどのエラー情報を表示
-		console.log("errorThrown    : " + errorThrown.message); // 例外情報を表示
-	});
-});

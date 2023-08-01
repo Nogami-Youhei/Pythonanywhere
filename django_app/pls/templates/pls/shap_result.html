@@ -19,7 +19,8 @@
 <p id="dot"><img src="/static/pls/img/dot.png?t={{ timestamp }}" alt="dot"></p>
 <p><img src="/static/pls/img/plot.png?t={{ timestamp }}" alt="plot"></p>
 </div>
-<form action="{% url 'shap' %}" method="post">
+<form action="{% url 'shap' %}" method="post" id="clear_shap">
 {% csrf_token %}
-<p id="clear"><input type="submit" value="clear"  name="clear" class="button"></p>
+<p id="clear"><input type="button" value="clear" name="clear" class="button" id="clear_btn"></p>
+<input type="hidden" name="clear" value="1">
 </form>

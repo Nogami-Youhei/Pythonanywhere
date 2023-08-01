@@ -15,7 +15,7 @@
     <p>※縦はデータ、横は説明変数となるように、データ名も含めてエクセルからコピーし、貼り付けてください</p>
     <p>サンプル行番号で選択した1データについて、それぞれの説明変数の寄与率が最下段のグラフに表示されます</p>
     </div>
-    <form action="{% url 'shap' %}" method="post">
+    <form action="{% url 'shap' %}" method="post" id="shap">
         {% csrf_token %}
         <table class="params">
         <tr><th>目的変数:</th><td class="target">{{ form.target }}</td></tr>
@@ -38,7 +38,7 @@
         </table>
         </div>
         <div class="shap-button">
-        <input type="submit" value="計算" class="button" id="btn">
+        <input type="button" value="計算" class="button" id="btn">
         <p id="message">{{ message }}</p>
         </div>
     </form>
