@@ -249,8 +249,6 @@ def scraping(request):
                     driver.get(url)
                     html = driver.page_source.encode('utf-8')
                     soup = BeautifulSoup(html, 'html.parser')
-                    html = driver.page_source.encode('utf-8')
-                    soup = BeautifulSoup(html, 'html.parser')
                     sortby = paper.choices
                     Select(driver.find_element(By.NAME, 'sortby')).select_by_value(str(sortby))
                     while True:
@@ -361,7 +359,6 @@ def scraping(request):
 
     
     except Exception as e:
-        raise e
         params = {
             'message': e,
             }
@@ -454,7 +451,7 @@ def shap_view(request):
                     result.sort()
                     
                     return result
-                
+
                 n_estimators = get_params(n_estimators_min, n_estimators_max, n_estimators_div)
                 max_depth = get_params(max_depth_min, max_depth_max, max_depth_div)
                 max_features = get_params(max_features_min, max_features_max, max_features_div)
@@ -526,11 +523,7 @@ def shap_view(request):
         except IndexError as e:
             return HttpResponse(1)
         except Exception as e:
-            params = {
-                'number': 2,
-                'message': str(e)
-            }
-            return JsonResponse(params)
+            return HttpResponse(str(e))
 
     form = ShapForm()
     context = {

@@ -13,22 +13,23 @@ $('form').submit(function(event){
 		url: form.prop('action'),
 		method: form.prop('method'),
 		data: form.serialize(),
-		dataTyep: 'html',
 	})
 	.done(function(data){
-		if (data === '0') {
+		if (data.trim()[0] === '<') {
+			console.log('result')
+			$('#shap_result').html(data);
+			$('#message').empty();
+		} else if (data === '0') {
+			console.log('error1')
 			$('#message').removeClass('start');
 			$('#message').text('入力値が不正です。入力データ数、特徴量の数は適切ですか？');
 		} else if (data === '1') {
+			console.log('error2')
 			$('#message').removeClass('start');
 			$('#message').text('サンプル行番号の指定は適切ですか？');
-		} else if (data.number === 2) {
-			console.log('test')
-			$('#message').removeClass('start');
-			$('#message').text(data.message);
 		} else {
-			$('#shap_result').html(data);
-			$('#message').empty();
+			$('#message').removeClass('start');
+			$('#message').text(data);
 		}
 	})
 	.fail((jqXHR, textStatus, errorThrown) => {
