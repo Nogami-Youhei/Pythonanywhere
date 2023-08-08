@@ -409,6 +409,16 @@ p#clear {
     text-align: center;
 }
 
+.excel_fig {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.excel_fig img {
+    width: 50%;
+    height: auto;
+}
+
 @media (max-width: 600px) {
     .page-header {
         flex-direction: column;
